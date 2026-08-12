@@ -165,17 +165,55 @@ public class CaracteresToken {
         numeros.add(PUNTO);
         
         caracteresEspeciales = new ArrayList<>();
-        caracteresEspeciales.add(GUION_BAJO);
         caracteresEspeciales.add(IGUAL);
         caracteresEspeciales.add(CONCATENACION);
         caracteresEspeciales.add(LLAVE_IZQUIERDA);
         caracteresEspeciales.add(LLAVE_DERECHA);
         caracteresEspeciales.add(PARENTESIS_IZQUIERDA);
         caracteresEspeciales.add(PARENTESIS_DERECHA);
+        caracteresEspeciales.add(COMILLAS);
+        caracteresEspeciales.add(SLASH);
+        caracteresEspeciales.add(ASTERISCO);
     }
     
     public List<Character> getCaracteres() {
         return caracteres;
+    }
+
+    public char getIGUAL() {
+        return IGUAL;
+    }
+
+    public List<Character> getNumeros() {
+        return numeros;
+    }
+
+    public List<Character> getCaracteresEspeciales() {
+        return caracteresEspeciales;
+    }
+
+    public char getCONCATENACION() {
+        return CONCATENACION;
+    }
+
+    public char getLLAVE_IZQUIERDA() {
+        return LLAVE_IZQUIERDA;
+    }
+
+    public char getLLAVE_DERECHA() {
+        return LLAVE_DERECHA;
+    }
+
+    public char getPARENTESIS_IZQUIERDA() {
+        return PARENTESIS_IZQUIERDA;
+    }
+
+    public char getPARENTESIS_DERECHA() {
+        return PARENTESIS_DERECHA;
+    }
+
+    public char getGUION_BAJO() {
+        return GUION_BAJO;
     }
 
     public char getCOMILLAS() {
