@@ -4,9 +4,9 @@
  */
 package Archivos;
 
-import Analizador.AnalizarDirectivas;
-import Analizador.AnalizadorPalabrasReservadas;
-import Analizador.ResultadoAnalizado;
+import AnalizadorPromtzal.Directivas.AnalizarDirectivas;
+import AnalizadorPromtzal.PalabrasReservadas.AnalizadorPalabrasReservadas;
+import AnalizadorPromtzal.ResultadoAnalizado;
 import Tokens.CaracteresToken;
 import Tokens.Tokens;
 import java.io.BufferedReader;
@@ -24,6 +24,8 @@ public class AnalizadorArchivo {
     private final List<String> tokens;
     private final AnalizarDirectivas analizarDirectivas;
     private final AnalizadorPalabrasReservadas analizarPalabrasReservadas;
+    private String lineaActual;
+    private int indiceInicial;
     private char letraActual;
     private int indiceLetra;
     
@@ -31,23 +33,24 @@ public class AnalizadorArchivo {
         claseCaracteres = new CaracteresToken();
         claseTokens = new Tokens();
         tokens = claseTokens.getTokens();
-        analizarDirectivas = new AnalizarDirectivas(claseCaracteres);
-        analizarPalabrasReservadas = new AnalizadorPalabrasReservadas(claseCaracteres, claseTokens);
+        analizarDirectivas = new AnalizarDirectivas(claseTokens, claseCaracteres);
+        analizarPalabrasReservadas = new AnalizadorPalabrasReservadas(claseTokens, claseCaracteres);
     }
     
     public void analizar(String linea, BufferedReader reader) throws IOException {
-        linea = linea.trim();
-        if (linea.isEmpty()) {
+        lineaActual = linea;
+        saltarEspacios(reader);
+        if (lineaActual == null) {
             return;
         }
         String tokenActual = "";
-        for (int i = 0; i < linea.length(); i++) {
+        for (int i = indiceInicial; i < lineaActual.length(); i++) {
             indiceLetra = i;
-            letraActual = linea.charAt(indiceLetra);
+            letraActual = lineaActual.charAt(indiceLetra);
             if (letraActual != ' ' && letraActual != claseCaracteres.getCOMILLAS()) {
                 tokenActual += letraActual;
             } else if (tokenValido(tokenActual)) {
-                instruccionToken(tokenActual, linea, reader);
+                instruccionToken(tokenActual, lineaActual, reader);
                 break;
             } else {
                 System.out.println("no es valido " + tokenActual);
@@ -65,17 +68,30 @@ public class AnalizadorArchivo {
         return false;
     }
     
+    private void saltarEspacios(BufferedReader reader) throws IOException {
+        reiniciarIndiceYLetra();
+        while (letraActual == ' ' || letraActual == '\t') {
+            indiceInicial++;
+            if (indiceInicial < lineaActual.length()) {
+                letraActual = lineaActual.charAt(indiceInicial);
+            } else {
+                lineaActual = reader.readLine();
+                if (lineaActual == null) {
+                    return;
+                }
+                reiniciarIndiceYLetra();
+            }
+        }
+    }
+    
+    private void reiniciarIndiceYLetra() {
+        indiceInicial = 0;
+        letraActual = lineaActual.charAt(indiceInicial);
+    }
+    
     private void instruccionToken(String token, String linea, BufferedReader reader) throws IOException {
         if (claseTokens.getTOKEN_MODELO().equals(token)) {
-            //analizarDirectivas.revisarTokenModelo(linea, indiceLetra);
-            ResultadoAnalizado resultado = analizarDirectivas.revisarCadenaTexto(linea, indiceLetra);
-            if (resultado.getResultado() != null && resultado.getError() == null) {
-                //guarda el valor de modelo
-                System.out.println("modelo reconoce " + resultado.getResultado());
-            } else if (resultado.getResultado() == null && resultado.getError() != null) {
-                //guarda el error
-                System.out.println(resultado.getError());
-            }
+            analizarDirectivas.revisarTokenModelo(linea, indiceLetra);
         } else if (claseTokens.getTOKEN_ROL().equals(token)) {
             analizarDirectivas.revisarTokenRol(linea, indiceLetra);
         } else if (claseTokens.getTOKEN_FORMATO().equals(token)) {
