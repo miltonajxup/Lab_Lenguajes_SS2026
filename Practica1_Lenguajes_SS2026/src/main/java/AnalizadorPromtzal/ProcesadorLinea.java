@@ -17,7 +17,7 @@ public class ProcesadorLinea {
     public void setLinea(String linea) {
         this.linea = linea;
         indiceLetra = 0;
-        if (linea != null && "".equals(linea)) {
+        if (linea != null && !"".equals(linea)) {
             letraActual = linea.charAt(0);
         }
     }
@@ -32,12 +32,28 @@ public class ProcesadorLinea {
         setPosicion(indice);
     }
     
+    public boolean esLineaNula() {
+        return linea == null;
+    }
+    
+    public boolean lineaVacia() {
+        return "".equals(linea);
+    }
+    
+    public String getLinea() {
+        return linea;
+    }
+    
     public char getLetraActual() {
         return letraActual;
     }
 
     public int getIndiceLetra() {
         return indiceLetra;
+    }
+    
+    public int getColumna() {
+        return indiceLetra + 1;
     }
 
     public void avanzar() {
@@ -55,6 +71,10 @@ public class ProcesadorLinea {
     
     public boolean finLinea() {
         return indiceLetra >= linea.length();
+    }
+    
+    public boolean inicioLinea() {
+        return indiceLetra == 0;
     }
     
     public boolean numeroParaFinLinea(int cantidad) {

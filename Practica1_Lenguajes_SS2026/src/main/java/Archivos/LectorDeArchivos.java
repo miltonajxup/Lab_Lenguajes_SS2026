@@ -22,11 +22,7 @@ public class LectorDeArchivos {
     
     public void abrirArchivo(String rutaArchivo) {
         try (BufferedReader reader = new BufferedReader(new FileReader(rutaArchivo))) {
-            String lineaActual = reader.readLine();
-            while (lineaActual != null) {
-                analizador.analizar(lineaActual, reader);
-                lineaActual = reader.readLine();
-            }
+            analizador.analizar(reader);
         } catch (IOException e) {
             System.out.println("Ocurrio un error al buscar el archivo " + e.getMessage());
         }

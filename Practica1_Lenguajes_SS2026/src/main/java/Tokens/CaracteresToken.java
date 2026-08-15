@@ -180,6 +180,14 @@ public class CaracteresToken {
         return caracteres;
     }
 
+    public char getC() {
+        return C;
+    }
+    
+    public char getARROBA() {
+        return ARROBA;
+    }
+
     public char getIGUAL() {
         return IGUAL;
     }

@@ -7,8 +7,10 @@ package AnalizadorPromtzal.Directivas;
 import AnalizadorPromtzal.Analizador;
 import AnalizadorPromtzal.ProcesadorLinea;
 import AnalizadorPromtzal.ResultadoAnalizado;
+import Archivos.AnalizadorArchivo;
 import Tokens.CaracteresToken;
-import Tokens.Tokens;
+import Tokens.Palabras;
+import Tokens.TipoToken;
 
 /**
  *
@@ -16,39 +18,21 @@ import Tokens.Tokens;
  */
 public class AnalizarDirectivas {
     
-    private final Tokens tokens;
-    private final CaracteresToken caracteres;
-    private final ProcesadorLinea procesador;
+    private final AnalizadorArchivo analizadorArchivo;
     private final Analizador analizador;
     
-    public AnalizarDirectivas(Tokens tokens, CaracteresToken caracteres) {
-        this.tokens = tokens;
-        this.caracteres = caracteres;
-        this.procesador =  new ProcesadorLinea();
-        this.analizador = new Analizador(tokens, caracteres, procesador);
+    public AnalizarDirectivas(Palabras palabras, CaracteresToken caracteres, ProcesadorLinea procesador, AnalizadorArchivo analizadorArchivo) {
+        this.analizadorArchivo = analizadorArchivo;
+        this.analizador = new Analizador(palabras, caracteres, procesador);
     }
     
-    public void revisarTokenModelo(String linea, int indice) {
-        procesador.setLineaEIndice(linea, indice);
-        analizador.revisarCadenaTexto();
+    public void revisarTokenDirectiva() {
         ResultadoAnalizado resultado = analizador.revisarCadenaTexto();
-        if (resultado.getResultado() != null && resultado.getError() == null) {
-            //guarda el valor de modelo
-            System.out.println("modelo reconoce: " + resultado.getResultado());
-        } else if (resultado.getResultado() == null && resultado.getError() != null) {
-            //guarda el error
-            System.out.println(resultado.getError());
+        if (resultado.getResultado() != null) {
+            analizadorArchivo.agregarToken(TipoToken.STRING, resultado.getResultado(), resultado.getColumna());
+        } else {
+            analizadorArchivo.agregarError(resultado.getLexema(), resultado.getError(), resultado.getColumna());
         }
-    }
-    
-    public void revisarTokenRol(String linea, int indice) {
-        procesador.setLineaEIndice(linea, indice);
-        analizador.revisarCadenaTexto();
-    }
-    
-    public void revisarTokenFormato(String linea, int indice) {
-        procesador.setLineaEIndice(linea, indice);
-        analizador.revisarCadenaTexto();
     }
     
 }

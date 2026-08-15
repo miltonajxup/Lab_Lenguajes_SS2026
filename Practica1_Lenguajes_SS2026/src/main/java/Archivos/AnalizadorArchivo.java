@@ -5,10 +5,14 @@
 package Archivos;
 
 import AnalizadorPromtzal.Directivas.AnalizarDirectivas;
-import AnalizadorPromtzal.PalabrasReservadas.AnalizadorPalabrasReservadas;
-import AnalizadorPromtzal.ResultadoAnalizado;
+import AnalizadorPromtzal.PalabrasReservadas.AnalizadorPalabrasAgente;
+import AnalizadorPromtzal.ProcesadorLinea;
+import Errores.ColeccionErrores;
 import Tokens.CaracteresToken;
-import Tokens.Tokens;
+import Tokens.ColeccionTokens;
+import Tokens.PalabraReservada;
+import Tokens.Palabras;
+import Tokens.TipoToken;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.List;
@@ -19,86 +23,93 @@ import java.util.List;
  */
 public class AnalizadorArchivo {
     
-    private final CaracteresToken claseCaracteres;
-    private final Tokens claseTokens;
-    private final List<String> tokens;
+    private final CaracteresToken caracteres;
+    private final Palabras palabras;
+    private final List<PalabraReservada> listaPalabras;
+    private final ProcesadorLinea procesador;
     private final AnalizarDirectivas analizarDirectivas;
-    private final AnalizadorPalabrasReservadas analizarPalabrasReservadas;
-    private String lineaActual;
-    private int indiceInicial;
-    private char letraActual;
-    private int indiceLetra;
+    private final AnalizadorPalabrasAgente analizarPalabrasAgente;
+    private final ColeccionTokens coleccionTokens;
+    private final ColeccionErrores coleccionErrores;
+    private BufferedReader reader;
+    private int fila;
     
     public AnalizadorArchivo() {
-        claseCaracteres = new CaracteresToken();
-        claseTokens = new Tokens();
-        tokens = claseTokens.getTokens();
-        analizarDirectivas = new AnalizarDirectivas(claseTokens, claseCaracteres);
-        analizarPalabrasReservadas = new AnalizadorPalabrasReservadas(claseTokens, claseCaracteres);
+        caracteres = new CaracteresToken();
+        palabras = new Palabras();
+        listaPalabras = palabras.getPalabras();
+        procesador = new ProcesadorLinea();
+        analizarDirectivas = new AnalizarDirectivas(palabras, caracteres, procesador, this);
+        analizarPalabrasAgente = new AnalizadorPalabrasAgente(palabras, caracteres, procesador, this);
+        coleccionTokens = new ColeccionTokens();
+        coleccionErrores = new ColeccionErrores();
+        fila = 0;
     }
     
-    public void analizar(String linea, BufferedReader reader) throws IOException {
-        lineaActual = linea;
-        saltarEspacios(reader);
-        if (lineaActual == null) {
-            return;
-        }
-        String tokenActual = "";
-        for (int i = indiceInicial; i < lineaActual.length(); i++) {
-            indiceLetra = i;
-            letraActual = lineaActual.charAt(indiceLetra);
-            if (letraActual != ' ' && letraActual != claseCaracteres.getCOMILLAS()) {
-                tokenActual += letraActual;
-            } else if (tokenValido(tokenActual)) {
-                instruccionToken(tokenActual, lineaActual, reader);
-                break;
+    public void agregarToken(TipoToken tipo, String lexema, int columna) {
+        coleccionTokens.agregarToken(tipo, lexema, fila, columna);
+    }
+    
+    public void agregarError(String lexema, String descripcion, int columna) {
+        coleccionErrores.agregarError(lexema, descripcion, fila, columna);
+    }
+    
+    public void analizar(BufferedReader reader) throws IOException {
+        this.reader = reader;
+        actualizarLinea();
+        while (!procesador.esLineaNula()) {
+            procesador.saltarEspacios();
+            if (procesador.finLinea() || procesador.lineaVacia() || procesador.esLineaNula()) {
+                actualizarLinea();
             } else {
-                System.out.println("no es valido " + tokenActual);
-                break;
-            }
-        }
-    }
-    
-    private boolean tokenValido(String token) {
-        for (int i = 0; i < tokens.size(); i++) {
-            if (tokens.get(i).equals(token)) {
-                return true;
-            }
-        }
-        return false;
-    }
-    
-    private void saltarEspacios(BufferedReader reader) throws IOException {
-        reiniciarIndiceYLetra();
-        while (letraActual == ' ' || letraActual == '\t') {
-            indiceInicial++;
-            if (indiceInicial < lineaActual.length()) {
-                letraActual = lineaActual.charAt(indiceInicial);
-            } else {
-                lineaActual = reader.readLine();
-                if (lineaActual == null) {
-                    return;
+                String tokenActual = "";
+                int columnaToken = 0;
+                while (procesador.getLetraActual() != ' ' && procesador.getLetraActual() != caracteres.getCOMILLAS() && !procesador.finLinea()) {
+                    if (columnaToken == 0) {
+                        columnaToken = procesador.getColumna();
+                    }
+                    tokenActual += procesador.getLetraActual();
+                    procesador.avanzar();
                 }
-                reiniciarIndiceYLetra();
+                PalabraReservada palabra = palabraValida(tokenActual);
+                if (palabra != null) {
+                    agregarToken(palabra.getTipo(), palabra.getLexema(), columnaToken);
+                    instruccionToken(tokenActual);
+                } else {
+                    agregarError(tokenActual, "No se puede reconocer " + tokenActual, columnaToken);
+                }
+                actualizarLinea();
             }
         }
+        System.out.println("");
     }
     
-    private void reiniciarIndiceYLetra() {
-        indiceInicial = 0;
-        letraActual = lineaActual.charAt(indiceInicial);
-    }
-    
-    private void instruccionToken(String token, String linea, BufferedReader reader) throws IOException {
-        if (claseTokens.getTOKEN_MODELO().equals(token)) {
-            analizarDirectivas.revisarTokenModelo(linea, indiceLetra);
-        } else if (claseTokens.getTOKEN_ROL().equals(token)) {
-            analizarDirectivas.revisarTokenRol(linea, indiceLetra);
-        } else if (claseTokens.getTOKEN_FORMATO().equals(token)) {
-            analizarDirectivas.revisarTokenFormato(linea, indiceLetra);
-        } else if (claseTokens.getTOKEN_AGENTE().equals(token)) {
-            analizarPalabrasReservadas.revisarTokenAgente(linea, reader, indiceLetra);
+    private void instruccionToken(String token) throws IOException {
+        if (token.charAt(0) == caracteres.getARROBA()) {
+            analizarDirectivas.revisarTokenDirectiva();
+        } else if (palabras.getAGENTE().equals(token)) {
+            analizarPalabrasAgente.revisarTokenAgente();
+        } else if (palabras.getPREGUNTAR().equals(token)) {
+            
         }
+    }
+    
+    public PalabraReservada palabraValida(String token) {
+        for (PalabraReservada palabraReservada : listaPalabras) {
+            if (palabraReservada.getLexema().equals(token)) {
+                return palabraReservada;
+            }
+        }
+        return null;
+    }
+    
+    public void actualizarLinea() throws IOException {
+        avanzarFila();
+        procesador.setLinea(reader.readLine());
+    }
+    
+    private void avanzarFila() {
+        fila++;
     }
     
 }
