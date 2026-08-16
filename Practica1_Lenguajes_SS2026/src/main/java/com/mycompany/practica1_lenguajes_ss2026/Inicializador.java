@@ -4,7 +4,11 @@
  */
 package com.mycompany.practica1_lenguajes_ss2026;
 
+import AnalizadorPromtzal.AnalizadorArchivo;
 import Archivos.LectorDeArchivos;
+import Archivos.Reporte.ExportarReporte;
+import Archivos.Reporte.FormatoReporte;
+import java.util.Scanner;
 
 /**
  *
@@ -13,8 +17,15 @@ import Archivos.LectorDeArchivos;
 public class Inicializador {
     
     public void iniciar() {
-        LectorDeArchivos lector = new LectorDeArchivos();
+        AnalizadorArchivo analizador = new AnalizadorArchivo();
+        LectorDeArchivos lector = new LectorDeArchivos(analizador);
         lector.abrirArchivo("/home/milton/Descargas/lenguajes.txt");
+        FormatoReporte formatoReporte = new FormatoReporte(analizador);
+        ExportarReporte exportar = new ExportarReporte(formatoReporte);
+        exportar.setCarpetaElegida("/home/milton/Descargas");
+        exportar.exportarReporte();
+        Scanner scanner = new Scanner(System.in);
+        //String rutaArchivo = scanner.nextLine();
     }
     
 }
