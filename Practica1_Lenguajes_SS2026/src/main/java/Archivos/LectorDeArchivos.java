@@ -6,6 +6,7 @@ package Archivos;
 
 import AnalizadorPromtzal.AnalizadorArchivo;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
@@ -21,12 +22,17 @@ public class LectorDeArchivos {
         this.analizador = analizador;
     }
     
-    public void abrirArchivo(String rutaArchivo) {
-        try (BufferedReader reader = new BufferedReader(new FileReader(rutaArchivo))) {
+    public boolean abrirArchivo(String rutaArchivo) {
+        File file = new File(rutaArchivo);
+        if (!file.exists() || file.isDirectory()) {
+            return false;
+        }
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             analizador.analizar(reader);
         } catch (IOException e) {
             System.out.println("Ocurrio un error al buscar el archivo " + e.getMessage());
         }
+        return true;
     }
     
 }

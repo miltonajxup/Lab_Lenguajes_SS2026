@@ -25,12 +25,13 @@ public class AnalizadorArchivo {
     
     private final Palabras palabras;
     private final ProcesadorLinea procesador;
-    private final ColeccionTokens coleccionTokens;
-    private final ColeccionErrores coleccionErrores;
+    private ColeccionTokens coleccionTokens;
+    private ColeccionErrores coleccionErrores;
     private final AnalizadorCadena analizadorCadena;
     private final AnalizadorToken analizadorToken;
     private BufferedReader reader;
     private int fila;
+    private int numeroAnalisis;
     
     public AnalizadorArchivo() {
         palabras = new Palabras();
@@ -40,6 +41,7 @@ public class AnalizadorArchivo {
         analizadorCadena = new AnalizadorCadena(palabras, procesador, this);
         analizadorToken = new AnalizadorToken(palabras, this);
         fila = 0;
+        numeroAnalisis = 0;
     }
 
     public List<Token> getColeccionTokens() {
@@ -50,6 +52,11 @@ public class AnalizadorArchivo {
         return coleccionErrores.getErrores();
     }
     
+    public void reiniciarListas() {
+        coleccionTokens = new ColeccionTokens();
+        coleccionErrores = new ColeccionErrores();
+    }
+    
     public void agregarToken(TipoToken tipo, String lexema, int columna) {
         coleccionTokens.agregarToken(tipo, lexema, fila, columna);
     }
@@ -57,9 +64,14 @@ public class AnalizadorArchivo {
     public void agregarError(String lexema, String descripcion, int columna) {
         coleccionErrores.agregarError(lexema, descripcion, fila, columna);
     }
+
+    public int getNumeroAnalisis() {
+        return numeroAnalisis;
+    }
     
     public void analizar(BufferedReader reader) throws IOException {
         this.reader = reader;
+        numeroAnalisis++;
         actualizarLinea();
         while (!procesador.esLineaNula()) {
             procesador.saltarEspacios();
@@ -70,7 +82,6 @@ public class AnalizadorArchivo {
                 actualizarLinea();
             }
         }
-        System.out.println("");
     }
     
     private void analizarLinea() {

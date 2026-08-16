@@ -11,7 +11,7 @@ package com.mycompany.practica1_lenguajes_ss2026;
 public class Practica1_Lenguajes_SS2026 {
 
     public static void main(String[] args) {
-        Inicializador inicializador = new Inicializador();
-        inicializador.iniciar();
+        InicializadorPromtzal inicializador = new InicializadorPromtzal();
+        inicializador.iniciarMenuPromtzal();
     }
 }

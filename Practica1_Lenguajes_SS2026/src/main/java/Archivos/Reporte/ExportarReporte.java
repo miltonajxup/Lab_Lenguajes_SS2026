@@ -4,6 +4,7 @@
  */
 package Archivos.Reporte;
 
+import AnalizadorPromtzal.AnalizadorArchivo;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -16,21 +17,33 @@ import java.io.PrintWriter;
 public class ExportarReporte {
     
     private final String CARPETA = "reportes/";
-    private final String ARCHIVO = "reportes_practica1.html";
+    private final String ARCHIVO = "reportes_practica1_";
+    private final String EXTENSION = ".html";
     private final FormatoReporte formato;
+    private final AnalizadorArchivo analizador;
     private String carpetaElegida;
+    private String ruta;
 
-    public ExportarReporte(FormatoReporte formato) {
+    public ExportarReporte(FormatoReporte formato, AnalizadorArchivo analizador) {
         this.formato = formato;
+        this.analizador = analizador;
         carpetaElegida = "";
     }
     
     public void setCarpetaElegida(String carpetaElegida) {
         this.carpetaElegida = carpetaElegida + "/";
     }
+
+    public String getCarpetaElegida() {
+        return carpetaElegida;
+    }
+    
+    public String getRuta() {
+        return ruta;
+    }
     
     public void exportarReporte() {
-        String ruta = carpetaElegida + CARPETA + ARCHIVO;
+        ruta = carpetaElegida + CARPETA + ARCHIVO + analizador.getNumeroAnalisis() + EXTENSION;
         existeCarpeta();
         try (PrintWriter writer = new PrintWriter(new FileWriter(ruta))) {
             formato.escribirReporte(writer);
