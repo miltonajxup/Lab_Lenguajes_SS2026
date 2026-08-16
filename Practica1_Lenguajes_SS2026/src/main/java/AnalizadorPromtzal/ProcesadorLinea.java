@@ -77,8 +77,4 @@ public class ProcesadorLinea {
         return indiceLetra == 0;
     }
     
-    public boolean numeroParaFinLinea(int cantidad) {
-        return indiceLetra < linea.length() - cantidad;
-    }
-    
 }

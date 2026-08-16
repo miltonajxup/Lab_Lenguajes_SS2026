@@ -175,11 +175,7 @@ public class CaracteresToken {
         caracteresEspeciales.add(SLASH);
         caracteresEspeciales.add(ASTERISCO);
     }
-    
-    public List<Character> getCaracteres() {
-        return caracteres;
-    }
-
+        
     public char getC() {
         return C;
     }

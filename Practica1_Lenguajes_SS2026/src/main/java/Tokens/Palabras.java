@@ -14,6 +14,12 @@ import java.util.List;
 public class Palabras {
     
     private final List<PalabraReservada> palabras;
+    private final List<PalabraReservada> caracteres;
+    private final List<String> numeros;
+    private final char ARROBA = '@';
+    private final char PUNTO = '.';
+    private final char GUION_BAJO = '_';
+    private final char COMILLAS = '"';
     
     public Palabras() {
         palabras = new ArrayList<>();
@@ -38,6 +44,31 @@ public class Palabras {
         palabras.add(new PalabraReservada("EN", TipoToken.EN));
         palabras.add(new PalabraReservada("COMO", TipoToken.COMO));
         palabras.add(new PalabraReservada("->", TipoToken.ASIGNACION));
+        
+        caracteres = new ArrayList<>();
+        caracteres.add(new PalabraReservada("\"", TipoToken.COMILLAS));
+        caracteres.add(new PalabraReservada("=", TipoToken.IGUAL));
+        caracteres.add(new PalabraReservada("+", TipoToken.CONCATENACION));
+        caracteres.add(new PalabraReservada("{", TipoToken.LLAVE_IZQUIERDA));
+        caracteres.add(new PalabraReservada("}", TipoToken.LLAVE_DERECHA));
+        caracteres.add(new PalabraReservada("(", TipoToken.PARENTESIS_IZQUIERDA));
+        caracteres.add(new PalabraReservada(")", TipoToken.PARENTESIS_DERECHA));
+        caracteres.add(new PalabraReservada("*", TipoToken.ASTERISCO));
+        caracteres.add(new PalabraReservada("//", TipoToken.COMENTARIO_LINEA));
+        caracteres.add(new PalabraReservada("/*", TipoToken.COMENTARIO_BLOQUE));
+        caracteres.add(new PalabraReservada("/", TipoToken.SLASH));
+        
+        numeros = new ArrayList<>();
+        numeros.add("0");
+        numeros.add("1");
+        numeros.add("2");
+        numeros.add("3");
+        numeros.add("4");
+        numeros.add("5");
+        numeros.add("6");
+        numeros.add("7");
+        numeros.add("8");
+        numeros.add("9");
     }
     
     public List<PalabraReservada> getPalabras() {
@@ -128,13 +159,37 @@ public class Palabras {
         return buscarPalabra(TipoToken.ASIGNACION);
     }
     
-    public String buscarPalabra(TipoToken tipo) {
+    private String buscarPalabra(TipoToken tipo) {
         for (PalabraReservada palabra : palabras) {
             if (palabra.getTipo() == tipo) {
                 return palabra.getLexema();
             }
         }
         return null;
+    }
+
+    public List<PalabraReservada> getCaracteres() {
+        return caracteres;
+    }
+    
+    public List<String> getNumeros() {
+        return numeros;
+    }
+
+    public char getARROBA() {
+        return ARROBA;
+    }
+
+    public char getPUNTO() {
+        return PUNTO;
+    }
+
+    public char getGUION_BAJO() {
+        return GUION_BAJO;
+    }
+
+    public char getCOMILLAS() {
+        return COMILLAS;
     }
     
 }

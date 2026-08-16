@@ -4,6 +4,7 @@
  */
 package Archivos;
 
+import AnalizadorPromtzal.AnalizadorArchivo;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -16,8 +17,8 @@ public class LectorDeArchivos {
     
     private final AnalizadorArchivo analizador;
     
-    public LectorDeArchivos() {
-        analizador = new AnalizadorArchivo();
+    public LectorDeArchivos(AnalizadorArchivo analizador) {
+        this.analizador = analizador;
     }
     
     public void abrirArchivo(String rutaArchivo) {
