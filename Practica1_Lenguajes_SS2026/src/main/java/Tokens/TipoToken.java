@@ -46,5 +46,6 @@ public enum TipoToken {
     
     IDENTIFICADOR, 
     STRING, 
-    INT
+    ENTERO,
+    DECIMAL
 }

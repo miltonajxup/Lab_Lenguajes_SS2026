@@ -16,10 +16,15 @@ public class Palabras {
     private final List<PalabraReservada> palabras;
     private final List<PalabraReservada> caracteres;
     private final List<String> numeros;
-    private final char ARROBA = '@';
-    private final char PUNTO = '.';
     private final char GUION_BAJO = '_';
     private final char COMILLAS = '"';
+    private final char ARROBA = '@';
+    private final char PUNTO = '.';
+    private final char SLASH = '/';
+    private final char ASTERISCO = '*';
+    private final String COMENTARIO_LINEA = "//";
+    private final String COMENT_BLOQUE_INICIO = "/*";
+    private final String COMENT_BLOQUE_FIN = "*/";
     
     public Palabras() {
         palabras = new ArrayList<>();
@@ -46,16 +51,17 @@ public class Palabras {
         palabras.add(new PalabraReservada("->", TipoToken.ASIGNACION));
         
         caracteres = new ArrayList<>();
-        caracteres.add(new PalabraReservada("\"", TipoToken.COMILLAS));
+        caracteres.add(new PalabraReservada(String.valueOf(COMILLAS), TipoToken.COMILLAS));
         caracteres.add(new PalabraReservada("=", TipoToken.IGUAL));
         caracteres.add(new PalabraReservada("+", TipoToken.CONCATENACION));
         caracteres.add(new PalabraReservada("{", TipoToken.LLAVE_IZQUIERDA));
         caracteres.add(new PalabraReservada("}", TipoToken.LLAVE_DERECHA));
         caracteres.add(new PalabraReservada("(", TipoToken.PARENTESIS_IZQUIERDA));
         caracteres.add(new PalabraReservada(")", TipoToken.PARENTESIS_DERECHA));
-        caracteres.add(new PalabraReservada("*", TipoToken.ASTERISCO));
-        caracteres.add(new PalabraReservada("//", TipoToken.COMENTARIO_LINEA));
-        caracteres.add(new PalabraReservada("/*", TipoToken.COMENTARIO_BLOQUE));
+        caracteres.add(new PalabraReservada(String.valueOf(ASTERISCO), TipoToken.ASTERISCO));
+        caracteres.add(new PalabraReservada(COMENTARIO_LINEA, TipoToken.COMENTARIO_LINEA));
+        caracteres.add(new PalabraReservada(COMENT_BLOQUE_INICIO, TipoToken.COMENTARIO_BLOQUE));
+        caracteres.add(new PalabraReservada(COMENT_BLOQUE_FIN, TipoToken.COMENTARIO_BLOQUE));
         caracteres.add(new PalabraReservada("/", TipoToken.SLASH));
         
         numeros = new ArrayList<>();
@@ -69,6 +75,7 @@ public class Palabras {
         numeros.add("7");
         numeros.add("8");
         numeros.add("9");
+        numeros.add(String.valueOf(PUNTO));
     }
     
     public List<PalabraReservada> getPalabras() {
@@ -190,6 +197,26 @@ public class Palabras {
 
     public char getCOMILLAS() {
         return COMILLAS;
+    }
+    
+    public char getSLASH() {
+        return SLASH;
+    }
+    
+    public char getASTERISCO() {
+        return ASTERISCO;
+    }
+    
+    public String getCOMENTARIO_LINEA() {
+        return COMENTARIO_LINEA;
+    }
+    
+    public String getCOMENT_BLOQUE_INICIO() {
+        return COMENT_BLOQUE_INICIO;
+    }
+    
+    public String getCOMENT_BLOQUE_FIN() {
+        return COMENT_BLOQUE_FIN;
     }
     
 }

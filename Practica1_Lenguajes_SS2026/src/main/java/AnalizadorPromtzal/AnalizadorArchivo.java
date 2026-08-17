@@ -5,7 +5,9 @@
 package AnalizadorPromtzal;
 
 import AnalizadorPromtzal.Tokens.AnalizadorCadena;
-import AnalizadorPromtzal.Tokens.AnalizadorToken;
+import AnalizadorPromtzal.Tokens.AnalizadorComentario;
+import AnalizadorPromtzal.Tokens.AnalizadorIdentificador;
+import AnalizadorPromtzal.Tokens.AnalizadorNumero;
 import Errores.ColeccionErrores;
 import Errores.ErrorLexico;
 import Tokens.ColeccionTokens;
@@ -28,10 +30,15 @@ public class AnalizadorArchivo {
     private ColeccionTokens coleccionTokens;
     private ColeccionErrores coleccionErrores;
     private final AnalizadorCadena analizadorCadena;
-    private final AnalizadorToken analizadorToken;
+    private final AnalizadorIdentificador analizadorIdentificador;
+    private final AnalizadorComentario analizadorComentario;
+    private final AnalizadorNumero analizadorNumero;
     private BufferedReader reader;
     private int fila;
     private int numeroAnalisis;
+    private String tokenActual;
+    private int columnaToken;
+    private boolean tokenTomado;
     
     public AnalizadorArchivo() {
         palabras = new Palabras();
@@ -39,7 +46,9 @@ public class AnalizadorArchivo {
         coleccionTokens = new ColeccionTokens();
         coleccionErrores = new ColeccionErrores();
         analizadorCadena = new AnalizadorCadena(palabras, procesador, this);
-        analizadorToken = new AnalizadorToken(palabras, this);
+        analizadorIdentificador = new AnalizadorIdentificador(palabras, this);
+        analizadorComentario = new AnalizadorComentario(palabras, procesador, this);
+        analizadorNumero = new AnalizadorNumero(palabras, procesador, this);
         fila = 0;
         numeroAnalisis = 0;
     }
@@ -55,6 +64,7 @@ public class AnalizadorArchivo {
     public void reiniciarListas() {
         coleccionTokens = new ColeccionTokens();
         coleccionErrores = new ColeccionErrores();
+        fila = 0;
     }
     
     public void agregarToken(TipoToken tipo, String lexema, int columna) {
@@ -82,40 +92,67 @@ public class AnalizadorArchivo {
                 actualizarLinea();
             }
         }
+        System.out.println("");
     }
     
-    private void analizarLinea() {
+    private void analizarLinea() throws IOException {
         while (!procesador.finLinea()) {
-            String tokenActual = "";
-            int columnaToken = 0;
-            boolean tokenTomado = false;
+            tokenActual = "";
+            columnaToken = 0;
+            tokenTomado = false;
             while (procesador.getLetraActual() != ' ' && !procesador.finLinea() && !tokenTomado) {
                 if (columnaToken == 0) {
                     columnaToken = procesador.getColumna();
+                    revisarNumero();
                 }
                 PalabraReservada caracterEspecial = caracterEspecial(String.valueOf(procesador.getLetraActual()));
                 if (caracterEspecial != null) {
-                    if (palabras.getCOMILLAS() == procesador.getLetraActual()) {
-                        analizadorCadena.revisarCadenaTexto();
-                    } else {
-                        agregarToken(caracterEspecial.getTipo(), caracterEspecial.getLexema(), procesador.getColumna());
-                    }
-                    if (!"".equals(tokenActual)) {
-                        analizadorToken.analizarToken(tokenActual, columnaToken);
-                    }
-                    tokenActual = "";
-                    columnaToken = 0;
-                    tokenTomado = true;
+                    revisarCaracter(caracterEspecial);
                 } else {
                     tokenActual += procesador.getLetraActual();
+                }
+                if (procesador.esLineaNula()) {
+                    agregarError(palabras.getCOMENT_BLOQUE_FIN(), "No se encuentra el cierre de comentario de bloque '"+palabras.getCOMENT_BLOQUE_FIN()+"'", procesador.getIndiceLetra());
+                    return;
                 }
                 procesador.avanzar();
             }
             if (!"".equals(tokenActual)) {
-                analizadorToken.analizarToken(tokenActual, columnaToken);
+                analizadorIdentificador.analizarToken(tokenActual, columnaToken);
             }
             procesador.saltarEspacios();
         }
+    }
+    
+    private void revisarNumero() throws IOException {
+        boolean esNumero = analizadorNumero.esNumero(procesador.getLetraActual());
+        while (esNumero) {
+            String respuesta = analizadorNumero.analizarNumero();
+            if (respuesta != null) {
+                tokenActual = respuesta;
+                return;
+            } else {
+                columnaToken = 0;
+            }
+            
+            esNumero = analizadorNumero.esNumero(procesador.getLetraActual());
+        }
+    }
+    
+    private void revisarCaracter(PalabraReservada caracterEspecial) throws IOException {
+        if (palabras.getSLASH() == procesador.getLetraActual()) {
+            analizadorComentario.analizarComentario();
+        } else if (palabras.getCOMILLAS() == procesador.getLetraActual()) {
+            analizadorCadena.revisarCadenaTexto();
+        } else {
+            agregarToken(caracterEspecial.getTipo(), caracterEspecial.getLexema(), procesador.getColumna());
+        }
+        if (!"".equals(tokenActual)) {
+            analizadorIdentificador.analizarToken(tokenActual, columnaToken);
+        }
+        tokenActual = "";
+        columnaToken = 0;
+        tokenTomado = true;
     }
     
     private PalabraReservada caracterEspecial(String token) {

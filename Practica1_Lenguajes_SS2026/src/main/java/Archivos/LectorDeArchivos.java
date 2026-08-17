@@ -30,7 +30,7 @@ public class LectorDeArchivos {
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             analizador.analizar(reader);
         } catch (IOException e) {
-            System.out.println("Ocurrio un error al buscar el archivo " + e.getMessage());
+            System.out.println("Ocurrio un error al leer el archivo " + e.getMessage());
         }
         return true;
     }

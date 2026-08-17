@@ -14,12 +14,12 @@ import java.util.List;
  *
  * @author milton
  */
-public class AnalizadorToken {
+public class AnalizadorIdentificador {
     
     private final Palabras palabras;
     private final AnalizadorArchivo analizadorArchivo;
 
-    public AnalizadorToken(Palabras palabras, AnalizadorArchivo analizadorArchivo) {
+    public AnalizadorIdentificador(Palabras palabras, AnalizadorArchivo analizadorArchivo) {
         this.palabras = palabras;
         this.analizadorArchivo = analizadorArchivo;
     }
@@ -43,16 +43,6 @@ public class AnalizadorToken {
         }
     }
     
-    private boolean esNumero(char caracter) {
-        List<String> numeros = palabras.getNumeros();
-        for (String numero : numeros) {
-            if (numero.equals(caracter)) {
-                return true;
-            }
-        }
-        return false;
-    }
-    
     public PalabraReservada palabraValida(String token) {
         List<PalabraReservada> listaPalabras = palabras.getPalabras();
         for (PalabraReservada palabraReservada : listaPalabras) {
@@ -64,18 +54,19 @@ public class AnalizadorToken {
     }
     
     private boolean primerCaracterValido(char primero) {
+        String primeroString = String.valueOf(primero);
         if (primero == palabras.getGUION_BAJO()) {
             return true;
         }
         List<PalabraReservada> caracteres = palabras.getCaracteres();
         for (PalabraReservada palabra : caracteres) {
-            if (palabra.getLexema().equals(primero)) {
+            if (palabra.getLexema().equals(primeroString)) {
                 return false;
             }
         }
         List<String> numeros = palabras.getNumeros();
         for (String numero : numeros) {
-            if (numero.equals(primero)) {
+            if (numero.equals(primeroString)) {
                 return false;
             }
         }

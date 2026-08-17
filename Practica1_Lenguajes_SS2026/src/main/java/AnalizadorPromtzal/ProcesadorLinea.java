@@ -77,4 +77,11 @@ public class ProcesadorLinea {
         return indiceLetra == 0;
     }
     
+    public char getSiguiente() {
+        if (indiceLetra < linea.length() - 1) {
+            return linea.charAt(indiceLetra + 1);
+        }
+        return ' ';
+    }
+    
 }
