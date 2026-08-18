@@ -5,7 +5,6 @@
 package com.mycompany.practica1_lenguajes_ss2026;
 
 import AnalizadorPromtzal.AnalizadorArchivo;
-import Archivos.LectorDeArchivos;
 import Archivos.Reporte.ExportarReporte;
 import Archivos.Reporte.FormatoReporte;
 import Menu.OpcionCargarArchivo;
@@ -32,8 +31,7 @@ public class InicializadorPromtzal {
         Scanner scanner = new Scanner(System.in);
         String eleccion;
         boolean salir = false;
-        //LectorDeArchivos lector = new LectorDeArchivos(analizador);
-        //lector.abrirArchivo("/home/milton/Descargas/numeros.pz");
+        
         while (!salir) {
             String textoMenu = """
                           -------------------------------------------------------

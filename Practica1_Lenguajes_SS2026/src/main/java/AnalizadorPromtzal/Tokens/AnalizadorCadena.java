@@ -37,7 +37,8 @@ public class AnalizadorCadena {
                     columnaToken = procesador.getColumna();
                 }
                 if (procesador.finLinea()) {
-                    analizadorArchivo.agregarError(instruccion, "Error: No se cierra la cadena con \"", columnaToken);
+                    analizadorArchivo.agregarError("\"" + instruccion, "Error: No se cierra la cadena con \"", columnaToken);
+                    return;
                 }
                 if (procesador.getLetraActual() != '"') {   
                     instruccion = instruccion + procesador.getLetraActual();

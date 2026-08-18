@@ -25,21 +25,17 @@ public class AnalizadorIdentificador {
     }
     
     public void analizarToken(String token, int columnaToken) {
-        boolean tokenTomado = false;
         PalabraReservada palabra = palabraValida(token);
-        if (palabra != null && !tokenTomado) {
+        if (palabra != null) {
             analizadorArchivo.agregarToken(palabra.getTipo(), palabra.getLexema(), columnaToken);
-            tokenTomado = true;
+            return;
         }
         
         boolean identificadorValido = primerCaracterValido(token.charAt(0));
-        if (identificadorValido && !tokenTomado) {
+        if (identificadorValido) {
             analizadorArchivo.agregarToken(TipoToken.IDENTIFICADOR, token, columnaToken);
-            tokenTomado = true;
-        }
-        
-        if (!tokenTomado) {
-            analizadorArchivo.agregarError(token, "Error: No se pudo reconocer " + token, columnaToken);
+        } else {
+            analizadorArchivo.agregarError(token, "Error: " + token + " porque los identificadores no pueden iniciar con " + token.charAt(0), columnaToken);
         }
     }
     

@@ -50,6 +50,9 @@ public class AnalizadorNumero {
                 procesador.avanzar();
             }
         }
+        if (actual == ' ') {
+            procesador.saltarEspacios();
+        }
         
         if ((actual == ' ' || procesador.finLinea()) && contadorPunto == 0) {
             analizadorArchivo.agregarToken(TipoToken.ENTERO, numero, columna);

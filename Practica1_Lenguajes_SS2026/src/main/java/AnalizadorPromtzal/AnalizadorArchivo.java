@@ -92,7 +92,6 @@ public class AnalizadorArchivo {
                 actualizarLinea();
             }
         }
-        System.out.println("");
     }
     
     private void analizarLinea() throws IOException {
@@ -104,12 +103,17 @@ public class AnalizadorArchivo {
                 if (columnaToken == 0) {
                     columnaToken = procesador.getColumna();
                     revisarNumero();
+                    if (procesador.esLineaNula() || procesador.finLinea()) {
+                        return;
+                    }
                 }
-                PalabraReservada caracterEspecial = caracterEspecial(String.valueOf(procesador.getLetraActual()));
-                if (caracterEspecial != null) {
-                    revisarCaracter(caracterEspecial);
-                } else {
-                    tokenActual += procesador.getLetraActual();
+                if (procesador.getLetraActual() != ' ') {
+                    PalabraReservada caracterEspecial = caracterEspecial(String.valueOf(procesador.getLetraActual()));
+                    if (caracterEspecial != null) {
+                        revisarCaracter(caracterEspecial);
+                    } else {
+                        tokenActual += procesador.getLetraActual();
+                    }
                 }
                 if (procesador.esLineaNula()) {
                     agregarError(palabras.getCOMENT_BLOQUE_FIN(), "No se encuentra el cierre de comentario de bloque '"+palabras.getCOMENT_BLOQUE_FIN()+"'", procesador.getIndiceLetra());

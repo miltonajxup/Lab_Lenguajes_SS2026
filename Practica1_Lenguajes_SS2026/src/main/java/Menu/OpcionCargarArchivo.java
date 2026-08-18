@@ -7,6 +7,7 @@ package Menu;
 import AnalizadorPromtzal.AnalizadorArchivo;
 import Archivos.LectorDeArchivos;
 import Archivos.Reporte.ExportarReporte;
+import Archivos.RespuestaArchivo;
 import java.util.Scanner;
 
 /**
@@ -38,13 +39,9 @@ public class OpcionCargarArchivo {
         if (nombreArchivo.equals("c")) {
             return;
         }
-        boolean existe = lector.abrirArchivo(nombreArchivo);
-        if (!existe) {
-            String mensaje = """
-                             El archivo que se intenta abrir no existe
-                             Presiona ENTER para continuar
-                             """;
-            System.out.println(mensaje);
+        RespuestaArchivo respuesta = lector.abrirArchivo(nombreArchivo);
+        if (!respuesta.isValido()) {
+            System.out.println(respuesta.getMensaje() + "\nPresiona ENTER para continuar");
             scanner.nextLine();
             return;
         }

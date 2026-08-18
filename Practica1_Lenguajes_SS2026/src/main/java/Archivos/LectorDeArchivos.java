@@ -17,22 +17,41 @@ import java.io.IOException;
 public class LectorDeArchivos {
     
     private final AnalizadorArchivo analizador;
+    private final String EXTENSION_VALIDA = ".pz";
+    private final int LONGITUD_EXTENSION = EXTENSION_VALIDA.length(); 
     
     public LectorDeArchivos(AnalizadorArchivo analizador) {
         this.analizador = analizador;
     }
     
-    public boolean abrirArchivo(String rutaArchivo) {
+    public RespuestaArchivo abrirArchivo(String rutaArchivo) {
         File file = new File(rutaArchivo);
         if (!file.exists() || file.isDirectory()) {
-            return false;
+            return new RespuestaArchivo(false, "El archivo " + rutaArchivo + " no existe o no es un archivo");
+        }
+        RespuestaArchivo extension = verificarExtension(rutaArchivo);
+        if (!extension.isValido()) {
+            return extension;
         }
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             analizador.analizar(reader);
         } catch (IOException e) {
             System.out.println("Ocurrio un error al leer el archivo " + e.getMessage());
         }
-        return true;
+        return new RespuestaArchivo(true, "No existe error");
+    }
+    
+    private RespuestaArchivo verificarExtension(String rutaArchivo) {
+        int finLinea = rutaArchivo.length();
+        int inicio = finLinea - LONGITUD_EXTENSION;
+        String extension = "";
+        for (int i = inicio; i < finLinea; i++) {
+            extension += rutaArchivo.charAt(i);
+        }
+        if (!EXTENSION_VALIDA.equals(extension)) {
+            return new RespuestaArchivo(false, "\n\nLa aplicacion solo acepta extensiones que sean " + EXTENSION_VALIDA + " y " + extension + " no lo es. \nArchivo: " + rutaArchivo + "\n");
+        }
+        return new RespuestaArchivo(true, "No existe error");
     }
     
 }

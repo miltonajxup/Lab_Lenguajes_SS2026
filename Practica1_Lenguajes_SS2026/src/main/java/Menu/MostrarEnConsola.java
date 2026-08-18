@@ -16,7 +16,7 @@ import java.util.List;
 public class MostrarEnConsola {
     
     private final AnalizadorArchivo analizador;
-    private final int TAMAÑO_FILA = 16;
+    private final int TAMAÑO_FILA = 18;
 
     public MostrarEnConsola(AnalizadorArchivo analizador) {
         this.analizador = analizador;
@@ -30,9 +30,9 @@ public class MostrarEnConsola {
                                 
                                                               Tabla de los tokens Reconocidos
                                 
-                          |---------------|---------------|------------------------------ |---------------|---------------|
-                          |    #Numero    | Tipo de Token |            Lexema             |     Fila      |    Columna    |
-                          |---------------|---------------|----------------------------- -|---------------|---------------|""";
+                          |-----------------|-----------------|-----------------------------------|-----------------|-----------------|
+                          |     #Numero     |  Tipo de Token  |              Lexema               |      Fila       |     Columna     |
+                          |-----------------|-----------------|-----------------------------------|-----------------|-----------------|""";
         System.out.println(cabeceraTokens);
         for (Token token : tokens) {
             String fila = "|";
@@ -44,7 +44,7 @@ public class MostrarEnConsola {
             System.out.println(fila);
         }
         String finTabla = """
-                          |---------------|---------------|-------------------------------|---------------|---------------|
+                          |-----------------|-----------------|-----------------------------------|-----------------|-----------------|
                           """;
         System.out.println(finTabla);
         String cabeceraErrores = """
@@ -52,12 +52,12 @@ public class MostrarEnConsola {
                                  
                                                                Tabla de Los Errores Identificados
                                  
-                          |---------------|-------------------------------|------------------------------|---------------|---------------|
-                          |    #Numero    |          Error Lexico         |           Descripcion        |     Fila      |    Columna    |
-                          |---------------|-------------------------------|------------------------------|---------------|---------------|""";
+                          |-----------------|-----------------------------------|-----------------------------------------------------|-----------------|-----------------|
+                          |     #Numero     |            Error Lexico           |                     Descripcion                     |      Fila       |     Columna     |
+                          |-----------------|-----------------------------------|-----------------------------------------------------|-----------------|-----------------|""";
         System.out.println(cabeceraErrores);
         String finTablaErrores = """
-                          |---------------|-------------------------------|------------------------------|---------------|---------------|
+                          |-----------------|-----------------------------------|-----------------------------------------------------|-----------------|-----------------|
                           
                           """;
         if (errores.size() > 0) {
@@ -65,9 +65,9 @@ public class MostrarEnConsola {
                 String fila = "|";
                 fila = agregarEspacios(fila + "    " + error.getNumero(), 1);
                 fila = agregarEspacios(fila + error.getErrorLexico(), 3);
-                fila = agregarEspacios(fila + error.getDescripcion(), 4);
-                fila = agregarEspacios(fila + error.getFila(), 6);
-                fila = agregarEspacios(fila + error.getColumna(), 7);
+                fila = agregarEspacios(fila + error.getDescripcion(), 6);
+                fila = agregarEspacios(fila + error.getFila(), 7);
+                fila = agregarEspacios(fila + error.getColumna(), 8);
                 System.out.println(fila);
             }
             System.out.println(finTablaErrores);

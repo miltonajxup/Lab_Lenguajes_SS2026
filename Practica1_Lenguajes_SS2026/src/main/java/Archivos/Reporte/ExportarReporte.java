@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Scanner;
 
 /**
  *
@@ -31,6 +32,18 @@ public class ExportarReporte {
     }
     
     public void setCarpetaElegida(String carpetaElegida) {
+        File file = new File(carpetaElegida);
+        if (!file.isDirectory()) {
+            System.out.println("\n\nLa direccion " + carpetaElegida + " no existe, si se desea continuar y crear Presione ENTER \nPara cancelar y regresar ingrese 'n'");
+            Scanner scanner = new Scanner(System.in);
+            String resuesta = scanner.nextLine();
+            if (resuesta.equals("n")) {
+                return;
+            } else {
+                file.mkdirs();
+            }
+        }
+        System.out.println("\nLa carpeta de guardado ahora es: " + carpetaElegida + "\n");
         this.carpetaElegida = carpetaElegida + "/";
     }
 

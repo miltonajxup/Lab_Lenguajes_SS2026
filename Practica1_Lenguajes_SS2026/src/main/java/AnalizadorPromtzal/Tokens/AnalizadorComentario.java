@@ -8,6 +8,7 @@ import AnalizadorPromtzal.AnalizadorArchivo;
 import AnalizadorPromtzal.ProcesadorLinea;
 import Tokens.PalabraReservada;
 import Tokens.Palabras;
+import Tokens.TipoToken;
 import java.io.IOException;
 
 /**
@@ -27,9 +28,11 @@ public class AnalizadorComentario {
     }
     
     public void analizarComentario() throws IOException {
-        String token = String.valueOf(procesador.getLetraActual()) + procesador.getSiguiente();
+        String letraActualString = String.valueOf(procesador.getLetraActual());
+        String token = letraActualString + procesador.getSiguiente();
         PalabraReservada caracterComentario = esToken(token);
         if (caracterComentario == null) {
+            analizadorArchivo.agregarToken(TipoToken.SLASH, letraActualString, procesador.getColumna());
             return;
         } 
         if (caracterComentario.getLexema().equals(palabras.getCOMENTARIO_LINEA())) {
