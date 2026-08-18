@@ -1,0 +1,26 @@
+@modelo "claude-sonnet-4-6"
+@rol "analista de datos"
+@formato "markdown"
+
+AGENTE laboratorio {
+contexto = "Eres un analista y desarrollador experto"
+variable ventas = CARGAR("ventas.csv")
+variable limite = 10
+variable precision = 98.5
+variable nombre = "ventas_totales"
+variable formula = "ingresos / unidades * 100"
+
+PREGUNTAR "Cuales son las tendencias principales?" SOBRE ventas -> tendencias
+EXTRAER "ventas, clientes, productos" DESDE ventas -> datos
+CLASIFICAR datos EN "alto, medio, bajo" -> categorias
+ANALIZAR categorias SOBRE "distribucion y frecuencia" -> analisis
+TRADUCIR analisis EN "ingles" -> traduccion
+GENERAR codigo DESDE "grafica de barras COMO visualizacion principal" -> script
+RESUMIR traduccion EN 100 palabras -> resumen
+
+variable resultado = (limite + precision) / 2
+variable ajuste = 5.25
+}
+
+EJECUTAR laboratorio
+EXPORTAR resumen, script, analisis, resultado

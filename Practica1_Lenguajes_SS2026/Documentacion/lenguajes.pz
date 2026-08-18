@@ -1,0 +1,25 @@
+  
+  @modelo "texto mi modelo"  
+@rol "rol"
+     @formato "asldkaj"
+ /ñlakfjsdñ
+ 0varnovalida
+asldkjf  
+2ñasldkfj
+   asdfl
+  slakdfj
+ ñlsdkj
+sñdlf
+
+  AGENTE _agente {
+	contexto = "mi contexto con espacio " 
+	token "token invalido"      
+	variable nombreDeVariable = CARGAR   (   "NOMBRE_ARCHIVO"   )     
+	PREGUNTAR "mi pregunta"    
+	 
+   }
+NADA
+NADA2   
+  EXPORTAR
+EJECUTAR
+
