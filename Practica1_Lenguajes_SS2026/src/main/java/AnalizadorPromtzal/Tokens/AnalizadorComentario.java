@@ -6,9 +6,9 @@ package AnalizadorPromtzal.Tokens;
 
 import AnalizadorPromtzal.AnalizadorArchivo;
 import AnalizadorPromtzal.ProcesadorLinea;
-import Tokens.PalabraReservada;
-import Tokens.Palabras;
-import Tokens.TipoToken;
+import Lenguaje.PalabraReservada;
+import Lenguaje.Palabras;
+import Lenguaje.TipoToken;
 import java.io.IOException;
 
 /**

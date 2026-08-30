@@ -5,9 +5,9 @@
 package AnalizadorPromtzal.Tokens;
 
 import AnalizadorPromtzal.AnalizadorArchivo;
-import Tokens.PalabraReservada;
-import Tokens.Palabras;
-import Tokens.TipoToken;
+import Lenguaje.PalabraReservada;
+import Lenguaje.Palabras;
+import Lenguaje.TipoToken;
 import java.util.List;
 
 /**
@@ -17,6 +17,7 @@ import java.util.List;
 public class AnalizadorIdentificador {
     
     private final Palabras palabras;
+    
     private final AnalizadorArchivo analizadorArchivo;
 
     public AnalizadorIdentificador(Palabras palabras, AnalizadorArchivo analizadorArchivo) {

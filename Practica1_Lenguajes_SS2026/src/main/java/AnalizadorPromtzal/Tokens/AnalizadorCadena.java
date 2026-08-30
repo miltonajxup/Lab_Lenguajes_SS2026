@@ -6,8 +6,8 @@ package AnalizadorPromtzal.Tokens;
 
 import AnalizadorPromtzal.AnalizadorArchivo;
 import AnalizadorPromtzal.ProcesadorLinea;
-import Tokens.Palabras;
-import Tokens.TipoToken;
+import Lenguaje.Palabras;
+import Lenguaje.TipoToken;
 
 /**
  *

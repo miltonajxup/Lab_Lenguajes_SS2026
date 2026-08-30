@@ -10,11 +10,12 @@ import AnalizadorPromtzal.Tokens.AnalizadorIdentificador;
 import AnalizadorPromtzal.Tokens.AnalizadorNumero;
 import Errores.ColeccionErrores;
 import Errores.ErrorLexico;
-import Tokens.ColeccionTokens;
-import Tokens.PalabraReservada;
-import Tokens.Palabras;
-import Tokens.TipoToken;
-import Tokens.Token;
+import Lenguaje.Alfabeto;
+import Lenguaje.ColeccionTokens;
+import Lenguaje.PalabraReservada;
+import Lenguaje.Palabras;
+import Lenguaje.TipoToken;
+import Lenguaje.Token;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.List;
@@ -26,6 +27,7 @@ import java.util.List;
 public class AnalizadorArchivo {
     
     private final Palabras palabras;
+    private final Alfabeto alfabeto;
     private final ProcesadorLinea procesador;
     private ColeccionTokens coleccionTokens;
     private ColeccionErrores coleccionErrores;
@@ -42,13 +44,14 @@ public class AnalizadorArchivo {
     
     public AnalizadorArchivo() {
         palabras = new Palabras();
+        alfabeto = new Alfabeto();
         procesador = new ProcesadorLinea();
         coleccionTokens = new ColeccionTokens();
         coleccionErrores = new ColeccionErrores();
         analizadorCadena = new AnalizadorCadena(palabras, procesador, this);
         analizadorIdentificador = new AnalizadorIdentificador(palabras, this);
         analizadorComentario = new AnalizadorComentario(palabras, procesador, this);
-        analizadorNumero = new AnalizadorNumero(palabras, procesador, this);
+        analizadorNumero = new AnalizadorNumero(palabras, alfabeto, procesador, this);
         fila = 0;
         numeroAnalisis = 0;
     }

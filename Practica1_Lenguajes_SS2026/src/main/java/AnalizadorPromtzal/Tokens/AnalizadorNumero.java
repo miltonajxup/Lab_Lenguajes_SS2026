@@ -6,8 +6,9 @@ package AnalizadorPromtzal.Tokens;
 
 import AnalizadorPromtzal.AnalizadorArchivo;
 import AnalizadorPromtzal.ProcesadorLinea;
-import Tokens.Palabras;
-import Tokens.TipoToken;
+import Lenguaje.Alfabeto;
+import Lenguaje.Palabras;
+import Lenguaje.TipoToken;
 import java.io.IOException;
 import java.util.List;
 
@@ -18,12 +19,14 @@ import java.util.List;
 public class AnalizadorNumero {
     
     private final Palabras palabras;
+    private final Alfabeto alfabeto;
     private final ProcesadorLinea procesador;
     private final AnalizadorArchivo analizadorArchivo;
     private int contadorPunto;
 
-    public AnalizadorNumero(Palabras palabras, ProcesadorLinea procesador, AnalizadorArchivo analizadorArchivo) {
+    public AnalizadorNumero(Palabras palabras, Alfabeto alfabeto, ProcesadorLinea procesador, AnalizadorArchivo analizadorArchivo) {
         this.palabras = palabras;
+        this.alfabeto = alfabeto;
         this.procesador = procesador;
         this.analizadorArchivo = analizadorArchivo;
         contadorPunto = 0;
@@ -88,9 +91,9 @@ public class AnalizadorNumero {
     }
     
     public boolean esNumero(char caracter) {
-        List<String> numeros = palabras.getNumeros();
-        for (String numero : numeros) {
-            if (numero.equals(String.valueOf(caracter))) {
+        List<Character> numeros = alfabeto.getNumeros();
+        for (Character numero : numeros) {
+            if (numero == caracter) {
                 return true;
             }
         }

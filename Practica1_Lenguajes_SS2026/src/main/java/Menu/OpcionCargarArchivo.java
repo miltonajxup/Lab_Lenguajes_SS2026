@@ -5,9 +5,9 @@
 package Menu;
 
 import AnalizadorPromtzal.AnalizadorArchivo;
-import Archivos.LectorDeArchivos;
+import Backend.ControladorDeArchivo;
 import Archivos.Reporte.ExportarReporte;
-import Archivos.RespuestaArchivo;
+import Backend.RespuestaArchivo;
 import java.util.Scanner;
 
 /**
@@ -17,14 +17,14 @@ import java.util.Scanner;
 public class OpcionCargarArchivo {
     
     private final AnalizadorArchivo analizador;
-    private final LectorDeArchivos lector;
+    private final ControladorDeArchivo lector;
     private final ExportarReporte exportar;
     private final MostrarEnConsola mostrar;
 
     public OpcionCargarArchivo(AnalizadorArchivo analizador, ExportarReporte exportar) {
         this.analizador = analizador;
         this.exportar = exportar;
-        lector = new LectorDeArchivos(analizador);
+        lector = new ControladorDeArchivo(analizador);
         mostrar = new MostrarEnConsola(analizador);
     }
     

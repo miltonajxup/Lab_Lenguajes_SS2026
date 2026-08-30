@@ -6,7 +6,7 @@ package Archivos.Reporte;
 
 import AnalizadorPromtzal.AnalizadorArchivo;
 import Errores.ErrorLexico;
-import Tokens.Token;
+import Lenguaje.Token;
 import java.io.PrintWriter;
 import java.util.List;
 
