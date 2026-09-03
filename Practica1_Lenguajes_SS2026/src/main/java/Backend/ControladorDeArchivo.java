@@ -18,20 +18,22 @@ import java.io.PrintWriter;
  */
 public class ControladorDeArchivo {
     
-    private AnalizadorArchivo analizador;
+    private final AnalizadorArchivo analizador;
     private final String EXTENSION_VALIDA = ".pz";
     private final int LONGITUD_EXTENSION = EXTENSION_VALIDA.length(); 
     private String archivoAbierto;
+    private String carpeta;
     
     public ControladorDeArchivo(AnalizadorArchivo analizador) {
         this.analizador = analizador;
     }
     
-    public ControladorDeArchivo() {
-    }
-    
     public void setArchivoAbierto(String archivoAbierto) {
         this.archivoAbierto = archivoAbierto;
+    }
+    
+    public String getCarpeta() {
+        return carpeta;
     }
     
     public RespuestaArchivo cargarArchivo(File archivo) throws ErrorDeArchivoException {
@@ -40,6 +42,7 @@ public class ControladorDeArchivo {
             return respuesta;
         }
         archivoAbierto = archivo.getAbsolutePath();
+        carpeta = archivo.getParent() + "/Archivos_Generados/";
         
         String textoArchivo = "";
         try (BufferedReader reader = new BufferedReader(new FileReader(archivo))) {
@@ -69,21 +72,15 @@ public class ControladorDeArchivo {
         }
     }
     
-    public RespuestaArchivo abrirArchivo(String rutaArchivo) {
-        File file = new File(rutaArchivo);
-        if (!file.exists() || file.isDirectory()) {
-            return new RespuestaArchivo(false, "El archivo " + rutaArchivo + " no existe o no es un archivo");
+    public void analizarArchivo(String contenidoActual) throws ErrorDeArchivoException {
+        if (archivoAbierto != null) {
+            guardarCambios(contenidoActual);
+            try (BufferedReader reader = new BufferedReader(new FileReader(archivoAbierto))) {
+                analizador.analizar(reader);
+            } catch (IOException e) {
+                throw new ErrorDeArchivoException("Ocurrio un error al leer el archivo: " + e.getMessage());
+            }
         }
-        RespuestaArchivo extension = verificarExtension(rutaArchivo);
-        if (!extension.isValido()) {
-            return extension;
-        }
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            analizador.analizar(reader);
-        } catch (IOException e) {
-            System.out.println("Ocurrio un error al leer el archivo " + e.getMessage());
-        }
-        return new RespuestaArchivo(true, "No existe error");
     }
     
     private RespuestaArchivo verificarExtension(String rutaArchivo) {
