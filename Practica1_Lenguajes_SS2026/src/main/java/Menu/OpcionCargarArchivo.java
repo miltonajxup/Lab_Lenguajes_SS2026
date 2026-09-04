@@ -6,8 +6,7 @@ package Menu;
 
 import AnalizadorPromtzal.AnalizadorArchivo;
 import Backend.ControladorDeArchivo;
-import Archivos.Reporte.ExportarReporte;
-import Backend.RespuestaArchivo;
+import Archivos.Reporte.ExportarReporteTokens;
 import java.util.Scanner;
 
 /**
@@ -18,10 +17,10 @@ public class OpcionCargarArchivo {
     
     private final AnalizadorArchivo analizador;
     private final ControladorDeArchivo lector;
-    private final ExportarReporte exportar;
+    private final ExportarReporteTokens exportar;
     private final MostrarEnConsola mostrar;
 
-    public OpcionCargarArchivo(AnalizadorArchivo analizador, ExportarReporte exportar) {
+    public OpcionCargarArchivo(AnalizadorArchivo analizador, ExportarReporteTokens exportar) {
         this.analizador = analizador;
         this.exportar = exportar;
         lector = new ControladorDeArchivo(analizador);
@@ -39,20 +38,20 @@ public class OpcionCargarArchivo {
         if (nombreArchivo.equals("c")) {
             return;
         }
-        RespuestaArchivo respuesta = lector.abrirArchivo(nombreArchivo);
-        if (!respuesta.isValido()) {
-            System.out.println(respuesta.getMensaje() + "\nPresiona ENTER para continuar");
-            scanner.nextLine();
-            return;
-        }
-        exportar.exportarReporte();
+//        RespuestaArchivo respuesta = lector.abrirArchivo(nombreArchivo);
+//        if (!respuesta.isValido()) {
+//            System.out.println(respuesta.getMensaje() + "\nPresiona ENTER para continuar");
+//            scanner.nextLine();
+//            return;
+//        }
+//        exportar.exportarReporte();
         mostrar.mostrarAnalisisArchivo();
         
-        if (exportar.getCarpetaElegida().equals("")) {
-            System.out.println("La ubicacion del archivo es donde se ubica el archivo del proyecto en una carpeta llamada 'reportes'");
-        } else {
-            System.out.println("La ubicacion del archivo html es " + exportar.getRuta());
-        }
+//        if (exportar.getCarpetaElegida().equals("")) {
+//            System.out.println("La ubicacion del archivo es donde se ubica el archivo del proyecto en una carpeta llamada 'reportes'");
+//        } else {
+//            System.out.println("La ubicacion del archivo html es " + exportar.getRuta());
+//        }
         
         analizador.reiniciarListas();
         System.out.println("\nPresiona ENTER para continuar");

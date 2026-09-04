@@ -293,6 +293,7 @@ public class PromtZal extends javax.swing.JFrame {
             controlador.analizarArchivo(jTextArea1.getText());
             exportarReporteTokens.exportarReporte();
             exportarAutomata.exportar();
+            
             mostrarMensaje("Se ha terminado de reconocer con exito");
         } catch (ErrorDeArchivoException e) {
             mostrarMensaje(e.getMessage());

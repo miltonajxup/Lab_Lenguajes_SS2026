@@ -4,70 +4,47 @@
  */
 package Archivos.Reporte;
 
-import AnalizadorPromtzal.AnalizadorArchivo;
+import Backend.ControladorDeArchivo;
+import Excepciones.ErrorDeArchivoException;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Scanner;
 
 /**
  *
  * @author milton
  */
-public class ExportarReporte {
+public class ExportarReporteTokens {
     
-    private final String CARPETA = "reportes/";
+    private final ControladorDeArchivo controlador;
     private final String ARCHIVO = "reportes_practica1_";
+    private int NUMERO_GENERADO = 0;
     private final String EXTENSION = ".html";
     private final FormatoReporte formato;
-    private final AnalizadorArchivo analizador;
-    private String carpetaElegida;
-    private String ruta;
 
-    public ExportarReporte(FormatoReporte formato, AnalizadorArchivo analizador) {
+    public ExportarReporteTokens(ControladorDeArchivo controlador, FormatoReporte formato) {
+        this.controlador = controlador;
         this.formato = formato;
-        this.analizador = analizador;
-        carpetaElegida = "";
     }
     
-    public void setCarpetaElegida(String carpetaElegida) {
-        File file = new File(carpetaElegida);
-        if (!file.isDirectory()) {
-            System.out.println("\n\nLa direccion " + carpetaElegida + " no existe, si se desea continuar y crear Presione ENTER \nPara cancelar y regresar ingrese 'n'");
-            Scanner scanner = new Scanner(System.in);
-            String resuesta = scanner.nextLine();
-            if (resuesta.equals("n")) {
-                return;
-            } else {
-                file.mkdirs();
-            }
+    public void exportarReporte() throws ErrorDeArchivoException {
+        if (controlador.getCarpeta() == null) {
+            return;
         }
-        System.out.println("\nLa carpeta de guardado ahora es: " + carpetaElegida + "\n");
-        this.carpetaElegida = carpetaElegida + "/";
-    }
-
-    public String getCarpetaElegida() {
-        return carpetaElegida;
-    }
-    
-    public String getRuta() {
-        return ruta;
-    }
-    
-    public void exportarReporte() {
-        ruta = carpetaElegida + CARPETA + ARCHIVO + analizador.getNumeroAnalisis() + EXTENSION;
         existeCarpeta();
+        NUMERO_GENERADO++;
+        String ruta = controlador.getCarpeta() + ARCHIVO + NUMERO_GENERADO + EXTENSION;
         try (PrintWriter writer = new PrintWriter(new FileWriter(ruta))) {
             formato.escribirReporte(writer);
         } catch (IOException e) {
-            System.out.println("Error al acceder a la carpeta: " + e.getMessage());
+            throw new ErrorDeArchivoException("Error al acceder a la carpeta: " + e.getMessage());
         }
     }
     
     private void existeCarpeta() {
-        String rutaFinal = carpetaElegida + CARPETA;
-        File file = new File(rutaFinal);
+        String lugarGuardado = controlador.getCarpeta();
+        File file = new File(lugarGuardado);
         if (!file.exists()) {
             file.mkdirs();
         }

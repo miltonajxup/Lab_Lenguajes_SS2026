@@ -22,10 +22,19 @@ public class ExportarAutomataDOT {
     private final String NOMBRE = "automata";
     private int NUMERO_GENERADO = 0;
     private final String EXTENSION = ".dot";
+    private String ultimoAutomata;
 
     public ExportarAutomataDOT(ControladorDeArchivo controlador, FormatoDOT formatodot) {
         this.controlador = controlador;
         this.formatodot = formatodot;
+    }
+    
+    public String getUltimoAutomata() {
+        return ultimoAutomata;
+    }
+    
+    public String getCarpeta() {
+        return controlador.getCarpeta();
     }
     
     public void exportar() throws ErrorDeArchivoException {
@@ -34,8 +43,8 @@ public class ExportarAutomataDOT {
         }
         existeCarpeta();
         NUMERO_GENERADO++;
-        String ruta = controlador.getCarpeta() + NOMBRE + NUMERO_GENERADO + EXTENSION;
-        try (PrintWriter writer = new PrintWriter(new FileWriter(ruta))) {
+        ultimoAutomata = controlador.getCarpeta() + NOMBRE + NUMERO_GENERADO + EXTENSION;
+        try (PrintWriter writer = new PrintWriter(new FileWriter(ultimoAutomata))) {
             writer.print(formatodot.getAutomataDOT());
         } catch (IOException e) {
             throw new ErrorDeArchivoException("Ocurrio un error al exportar el automata: " + e.getMessage());

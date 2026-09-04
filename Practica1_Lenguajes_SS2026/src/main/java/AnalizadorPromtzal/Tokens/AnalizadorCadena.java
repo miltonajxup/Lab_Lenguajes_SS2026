@@ -6,6 +6,7 @@ package AnalizadorPromtzal.Tokens;
 
 import AnalizadorPromtzal.AnalizadorArchivo;
 import AnalizadorPromtzal.ProcesadorLinea;
+import Automata.ReconocimientoAutomata;
 import Lenguaje.Palabras;
 import Lenguaje.TipoToken;
 
@@ -18,11 +19,13 @@ public class AnalizadorCadena {
     private final Palabras palabras;
     private final ProcesadorLinea procesador;
     private final AnalizadorArchivo analizadorArchivo;
+    private final ReconocimientoAutomata reconocimiento;
 
-    public AnalizadorCadena(Palabras palabras, ProcesadorLinea procesador, AnalizadorArchivo analizadorArchivo) {
+    public AnalizadorCadena(Palabras palabras, ProcesadorLinea procesador, AnalizadorArchivo analizadorArchivo, ReconocimientoAutomata reconocimiento) {
         this.palabras = palabras;
         this.procesador = procesador;
         this.analizadorArchivo = analizadorArchivo;
+        this.reconocimiento = reconocimiento;
     }
     
     public void revisarCadenaTexto() {
@@ -33,11 +36,13 @@ public class AnalizadorCadena {
         if (procesador.getLetraActual() == palabras.getCOMILLAS()) {
             while (!cerrarCadena) {
                 procesador.avanzar();
+                reconocimiento.reconocer(procesador.getLetraActual());
                 if (columnaToken == 0) {
                     columnaToken = procesador.getColumna();
                 }
                 if (procesador.finLinea()) {
                     analizadorArchivo.agregarError("\"" + instruccion, "Error: No se cierra la cadena con \"", columnaToken);
+                    reconocimiento.reiniciarEstado();
                     return;
                 }
                 if (procesador.getLetraActual() != '"') {   

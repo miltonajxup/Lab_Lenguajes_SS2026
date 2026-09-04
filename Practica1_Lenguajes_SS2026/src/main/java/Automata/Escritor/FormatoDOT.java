@@ -22,8 +22,9 @@ public class FormatoDOT {
     private final Alfabeto alfabeto;
     private final Palabras palabras;
     private List<Transicion> transicionesEncontradas;
-    private String automataodt;
+    private String automatadot;
     private boolean identificadorTomado;
+    private boolean letrasComillaTomado;
     private boolean numeroTomado;
     private boolean simboloTomado;
     
@@ -40,30 +41,44 @@ public class FormatoDOT {
             return;
         }
         String nodoActual = "\n\t" + transicion.getEstadoActual() + " [shape=circle]";
-        automataodt += nodoActual;
-//        String nodoSiguiente;
-//        if (esFinal) {
-//            nodoSiguiente = "\n\t" + transicion.getSiguiente()+ "[shape=doublecircle];" ;
-//        } else {
-//            nodoSiguiente = "\n\t" + transicion.getSiguiente()+ "[shape=circle];" ;
-//        }
-//        automataodt += nodoSiguiente;
+        automatadot += nodoActual;
         if (esFinal) {
             String nodoSiguiente = "\n\t" + transicion.getSiguiente()+ " [shape=doublecircle];" ;
-            automataodt += nodoSiguiente;
+            automatadot += nodoSiguiente;
         }
-        String nuevaTransicion = "\n\t" + transicion.getEstadoActual() + " -> " + transicion.getSiguiente() + " [label=\"" + transicion.getLetraActual() + "\"];\n";
-        automataodt += nuevaTransicion;
+        String caracter;
+        if (transicion.getLetraActual() != palabras.getCOMILLAS()) {
+            caracter = "" + transicion.getLetraActual();
+        } else {
+            caracter = "''";
+        }
+        String nuevaTransicion = "\n\t" + transicion.getEstadoActual() + " -> " + transicion.getSiguiente() + " [label=\"" + caracter + "\"];\n";
+        automatadot += nuevaTransicion;
+    }
+    
+    public void agregarNodoLetra() {
+        if (!letrasComillaTomado) {
+            letrasComillaTomado = true;
+            String nodo = "\n\t" + diccionario.getQ_LETRA() + " [shape=circle]; \n\t" 
+                    + diccionario.getQ_COMILLA() + " -> " + diccionario.getQ_LETRA() + " [label=\"letra, numero, simbolo\"]\n";
+            automatadot += nodo;
+        }
+    }
+    
+    public void terminarComoIdentificador(String estadoActual) {
+        String finId = "\n\tq_identificador [shape=doublecircle] \n\t" 
+                + estadoActual + " -> " + "q_identificador [label=\"_,letra,numero\"]\n";
+        automatadot += finId;
     }
     
     public void agregarAutomataIdentificador() {
         if (!identificadorTomado) {
             identificadorTomado = true;
-            String nodoId = "\n\tletra [shape=circle]; \n\tletra/numero [shape=doublecircle]; \n\t" 
-                    + diccionario.getINICIO() + " -> letra [label=\"_, letra\"] "
-                    + "\n\tletra -> letra/numero [label=\"_,letra,numero\"] "
-                    + "\n\tletra/numero -> letra/numero [label=\"_,letra,numero\"]";
-            automataodt += nodoId;
+            String nodoId = "\n\tletra [shape=circle]; \n\tq_identificador [shape=doublecircle]; \n\t" 
+                    + diccionario.getINICIO() + " -> letra [label=\"_ , letra\"] "
+                    + "\n\tletra -> q_identificador [label=\"_ ,letra,numero\"] "
+                    + "\n\tq_identificador -> q_identificador [label=\"_ ,letra,numero\"]\n";
+            automatadot += nodoId;
         }
     }
     
@@ -79,8 +94,8 @@ public class FormatoDOT {
                 }
             }
             String nodoNumero = "\n\tnumero [shape=doublecircle]; \n\t" 
-                    + diccionario.getINICIO() + " -> numero [label=\"" + numeros + "\"];\n\tnumero -> numero [label=\"" + numerosSinPunto + "\"];";
-            automataodt += nodoNumero;
+                    + diccionario.getINICIO() + " -> numero [label=\"" + numeros + "\"];\n\tnumero -> numero [label=\"" + numerosSinPunto + "\"];\n";
+            automatadot += nodoNumero;
         }
     }
     
@@ -95,7 +110,7 @@ public class FormatoDOT {
             }
             String nodoSimbolo = "\n\tsimbolo [shape=doublecircle]; \n\t" 
                     + diccionario.getINICIO() + " -> simbolo [label=\"" + simbolos + "\"];\n\tsimbolo -> simbolo [label=\"" + simbolos + "\"];";
-            automataodt += nodoSimbolo;
+            automatadot += nodoSimbolo;
         }
     }
     
@@ -110,7 +125,7 @@ public class FormatoDOT {
     }
     
     public String getAutomataDOT() {
-        return automataodt + "\n}";
+        return automatadot + "\n}";
     }
     
     public void reiniciarAutomataOdt() {
@@ -122,7 +137,7 @@ public class FormatoDOT {
     }
     
     private void iniciarAutomataOdt() {
-        automataodt = "digraph Automata { \n\trankdir=LR;\n\tinicio [shape=point];\n\tinicio -> " + diccionario.getINICIO() + ";";
+        automatadot = "digraph Automata { \n\trankdir=LR;\n\tinicio [shape=point];\n\tinicio -> " + diccionario.getINICIO() + ";\n";
     }
     
 }

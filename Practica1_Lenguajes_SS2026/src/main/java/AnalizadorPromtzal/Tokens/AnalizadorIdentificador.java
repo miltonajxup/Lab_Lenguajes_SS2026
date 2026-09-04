@@ -5,6 +5,7 @@
 package AnalizadorPromtzal.Tokens;
 
 import AnalizadorPromtzal.AnalizadorArchivo;
+import Automata.ReconocimientoAutomata;
 import Lenguaje.PalabraReservada;
 import Lenguaje.Palabras;
 import Lenguaje.TipoToken;
@@ -17,12 +18,13 @@ import java.util.List;
 public class AnalizadorIdentificador {
     
     private final Palabras palabras;
-    
     private final AnalizadorArchivo analizadorArchivo;
+    private final ReconocimientoAutomata reconocimiento;
 
-    public AnalizadorIdentificador(Palabras palabras, AnalizadorArchivo analizadorArchivo) {
+    public AnalizadorIdentificador(Palabras palabras, AnalizadorArchivo analizadorArchivo, ReconocimientoAutomata reconocimiento) {
         this.palabras = palabras;
         this.analizadorArchivo = analizadorArchivo;
+        this.reconocimiento = reconocimiento;
     }
     
     public void analizarToken(String token, int columnaToken) {
@@ -35,6 +37,7 @@ public class AnalizadorIdentificador {
         boolean identificadorValido = primerCaracterValido(token.charAt(0));
         if (identificadorValido) {
             analizadorArchivo.agregarToken(TipoToken.IDENTIFICADOR, token, columnaToken);
+            reconocimiento.reconocerIdentificador();
         } else {
             analizadorArchivo.agregarError(token, "Error: " + token + " porque los identificadores no pueden iniciar con " + token.charAt(0), columnaToken);
         }

@@ -35,6 +35,9 @@ public class ReconocimientoAutomata {
             return;
         }
         for (Transicion transicion : transiciones) {
+            if (transicion.getEstadoActual().equals(diccionario.getQ_LETRA())) {
+                System.out.println("letra entrante: " + letraActual);
+            }
             if (transicion.getEstados() != null) {
                 for (Transicion siguiente : transicion.getEstados()) {
                     if (transicionTomada(siguiente, letraActual)) {
@@ -45,7 +48,16 @@ public class ReconocimientoAutomata {
                 return;
             }
         }
-        estadoActual = diccionario.getINICIO();
+        if (diccionario.getQ_COMILLA().equals(estadoActual)) {
+            System.out.println("letra: " + letraActual);
+            formatodot.agregarNodoLetra();
+            estadoActual = diccionario.getQ_LETRA();
+            return;
+        }
+        if (esEstadoFinalAceptado()) {
+            formatodot.terminarComoIdentificador(estadoActual);
+        }
+        reiniciarEstado();
     }
     
     private boolean transicionTomada(Transicion transicion, char letraActual) {
@@ -70,12 +82,30 @@ public class ReconocimientoAutomata {
     }
     
     public void reiciniar() {
+        reiniciarEstado();
+        formatodot.reiniciarAutomataOdt();
+    }
+    
+    public void reiniciarEstado() {
         estadoActual = diccionario.getINICIO();
     }
     
     private boolean esFinal(Transicion transicion) {
         for (Transicion actual : diccionario.getEstadosDeAceptacion()) {
             if (actual.equals(transicion)) {
+                if (actual.getSiguiente().equals(diccionario.getQ_COMILLA())) {
+                    System.out.println(actual.getEstadoActual()+actual.getSiguiente()+actual.getLetraActual());
+                    reiniciarEstado();
+                }
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    private boolean esEstadoFinalAceptado() {
+        for (Transicion actual : diccionario.getEstadosDeAceptacion()) {
+            if (actual.getSiguiente().equals(estadoActual)) {
                 return true;
             }
         }

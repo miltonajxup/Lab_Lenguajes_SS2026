@@ -5,7 +5,7 @@
 package Menu;
 
 import AnalizadorPromtzal.AnalizadorArchivo;
-import Errores.ErrorLexico;
+import DatosReporte.Errores.ErrorLexico;
 import Lenguaje.Token;
 import java.util.List;
 

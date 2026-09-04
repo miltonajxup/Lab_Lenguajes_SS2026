@@ -142,6 +142,8 @@ public class Diccionario {
     private final String Q_DES = "q_DES";
     private final String Q_DESD = "q_DESD";
     private final String Q_DESDE = "q_DESDE";
+    private final String Q_COMILLA = "q_COMILLA";
+    private final String Q_LETRA = "q_LETRA";
 
     public Diccionario() {
         transiciones = new ArrayList<>();
@@ -323,6 +325,12 @@ public class Diccionario {
         Transicion desde = new Transicion(Q_DESD, 'E', Q_DESDE);
         transiciones.add(desde);
         
+        transiciones.add(new Transicion(INICIO, '"', Q_COMILLA));
+        Transicion finCadena = new Transicion(Q_LETRA, '"', Q_COMILLA);
+        Transicion finCadenaVacia = new Transicion(Q_COMILLA, '"', Q_COMILLA);
+        transiciones.add(finCadena);
+        transiciones.add(finCadenaVacia);
+        
         estadosDeAceptacion = new ArrayList<>();
         estadosDeAceptacion.add(modelo);
         estadosDeAceptacion.add(rol);
@@ -344,6 +352,8 @@ public class Diccionario {
         estadosDeAceptacion.add(como);
         estadosDeAceptacion.add(sobre);
         estadosDeAceptacion.add(desde);
+        estadosDeAceptacion.add(finCadena);
+        estadosDeAceptacion.add(finCadenaVacia);
     }
     
     public List<Transicion> getTransiciones() {
@@ -356,6 +366,14 @@ public class Diccionario {
     
     public String getINICIO() {
         return INICIO;
+    }
+    
+    public String getQ_COMILLA() {
+        return Q_COMILLA;
+    }
+    
+    public String getQ_LETRA() {
+        return Q_LETRA;
     }
     
 }

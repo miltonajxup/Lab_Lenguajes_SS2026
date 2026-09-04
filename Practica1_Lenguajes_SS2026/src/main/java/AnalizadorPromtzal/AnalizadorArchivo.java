@@ -8,10 +8,13 @@ import AnalizadorPromtzal.Tokens.AnalizadorCadena;
 import AnalizadorPromtzal.Tokens.AnalizadorComentario;
 import AnalizadorPromtzal.Tokens.AnalizadorIdentificador;
 import AnalizadorPromtzal.Tokens.AnalizadorNumero;
-import Errores.ColeccionErrores;
-import Errores.ErrorLexico;
+import Automata.Escritor.FormatoDOT;
+import Automata.ReconocimientoAutomata;
+import DatosReporte.ColeccionEstadisticas;
+import DatosReporte.Errores.ColeccionErrores;
+import DatosReporte.Errores.ErrorLexico;
 import Lenguaje.Alfabeto;
-import Lenguaje.ColeccionTokens;
+import DatosReporte.ColeccionTokens;
 import Lenguaje.PalabraReservada;
 import Lenguaje.Palabras;
 import Lenguaje.TipoToken;
@@ -29,31 +32,33 @@ public class AnalizadorArchivo {
     private final Palabras palabras;
     private final Alfabeto alfabeto;
     private final ProcesadorLinea procesador;
+    private ColeccionEstadisticas coleccionEstadisticas;
     private ColeccionTokens coleccionTokens;
     private ColeccionErrores coleccionErrores;
+    private final ReconocimientoAutomata reconocimiento;
     private final AnalizadorCadena analizadorCadena;
     private final AnalizadorIdentificador analizadorIdentificador;
     private final AnalizadorComentario analizadorComentario;
     private final AnalizadorNumero analizadorNumero;
     private BufferedReader reader;
     private int fila;
-    private int numeroAnalisis;
     private String tokenActual;
     private int columnaToken;
     private boolean tokenTomado;
     
-    public AnalizadorArchivo() {
+    public AnalizadorArchivo(FormatoDOT formatodot) {
         palabras = new Palabras();
         alfabeto = new Alfabeto();
         procesador = new ProcesadorLinea();
-        coleccionTokens = new ColeccionTokens();
+        coleccionEstadisticas = new ColeccionEstadisticas(palabras);
+        coleccionTokens = new ColeccionTokens(coleccionEstadisticas);
         coleccionErrores = new ColeccionErrores();
-        analizadorCadena = new AnalizadorCadena(palabras, procesador, this);
-        analizadorIdentificador = new AnalizadorIdentificador(palabras, this);
+        reconocimiento = new ReconocimientoAutomata(formatodot);
+        analizadorCadena = new AnalizadorCadena(palabras, procesador, this, reconocimiento);
+        analizadorIdentificador = new AnalizadorIdentificador(palabras, this, reconocimiento);
         analizadorComentario = new AnalizadorComentario(palabras, procesador, this);
         analizadorNumero = new AnalizadorNumero(palabras, alfabeto, procesador, this);
         fila = 0;
-        numeroAnalisis = 0;
     }
 
     public List<Token> getColeccionTokens() {
@@ -65,7 +70,7 @@ public class AnalizadorArchivo {
     }
     
     public void reiniciarListas() {
-        coleccionTokens = new ColeccionTokens();
+        coleccionTokens = new ColeccionTokens(coleccionEstadisticas);
         coleccionErrores = new ColeccionErrores();
         fila = 0;
     }
@@ -78,13 +83,9 @@ public class AnalizadorArchivo {
         coleccionErrores.agregarError(lexema, descripcion, fila, columna);
     }
 
-    public int getNumeroAnalisis() {
-        return numeroAnalisis;
-    }
-    
     public void analizar(BufferedReader reader) throws IOException {
+        reconocimiento.reiciniar();
         this.reader = reader;
-        numeroAnalisis++;
         actualizarLinea();
         while (!procesador.esLineaNula()) {
             procesador.saltarEspacios();
@@ -103,6 +104,7 @@ public class AnalizadorArchivo {
             columnaToken = 0;
             tokenTomado = false;
             while (procesador.getLetraActual() != ' ' && !procesador.finLinea() && !tokenTomado) {
+                reconocimiento.reconocer(procesador.getLetraActual());
                 if (columnaToken == 0) {
                     columnaToken = procesador.getColumna();
                     revisarNumero();
@@ -124,6 +126,7 @@ public class AnalizadorArchivo {
                 }
                 procesador.avanzar();
             }
+            reconocimiento.reconocer(procesador.getLetraActual());
             if (!"".equals(tokenActual)) {
                 analizadorIdentificador.analizarToken(tokenActual, columnaToken);
             }
@@ -140,6 +143,7 @@ public class AnalizadorArchivo {
                 return;
             } else {
                 columnaToken = 0;
+                reconocimiento.reconocerNumero();
             }
             
             esNumero = analizadorNumero.esNumero(procesador.getLetraActual());
@@ -153,6 +157,7 @@ public class AnalizadorArchivo {
             analizadorCadena.revisarCadenaTexto();
         } else {
             agregarToken(caracterEspecial.getTipo(), caracterEspecial.getLexema(), procesador.getColumna());
+            reconocimiento.reconocerSimbolo();
         }
         if (!"".equals(tokenActual)) {
             analizadorIdentificador.analizarToken(tokenActual, columnaToken);
