@@ -35,9 +35,6 @@ public class ReconocimientoAutomata {
             return;
         }
         for (Transicion transicion : transiciones) {
-            if (transicion.getEstadoActual().equals(diccionario.getQ_LETRA())) {
-                System.out.println("letra entrante: " + letraActual);
-            }
             if (transicion.getEstados() != null) {
                 for (Transicion siguiente : transicion.getEstados()) {
                     if (transicionTomada(siguiente, letraActual)) {
@@ -48,8 +45,7 @@ public class ReconocimientoAutomata {
                 return;
             }
         }
-        if (diccionario.getQ_COMILLA().equals(estadoActual)) {
-            System.out.println("letra: " + letraActual);
+        if (diccionario.getQ_COMILLA().equals(estadoActual) || diccionario.getQ_LETRA().equals(estadoActual)) {
             formatodot.agregarNodoLetra();
             estadoActual = diccionario.getQ_LETRA();
             return;
@@ -94,7 +90,6 @@ public class ReconocimientoAutomata {
         for (Transicion actual : diccionario.getEstadosDeAceptacion()) {
             if (actual.equals(transicion)) {
                 if (actual.getSiguiente().equals(diccionario.getQ_COMILLA())) {
-                    System.out.println(actual.getEstadoActual()+actual.getSiguiente()+actual.getLetraActual());
                     reiniciarEstado();
                 }
                 return true;

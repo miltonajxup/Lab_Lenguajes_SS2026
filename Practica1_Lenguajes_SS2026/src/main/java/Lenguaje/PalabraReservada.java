@@ -12,10 +12,12 @@ public class PalabraReservada {
     
     private final String lexema;
     private final TipoToken tipo;
+    private final String colorCss;
 
-    public PalabraReservada(String lexema, TipoToken tipo) {
+    public PalabraReservada(String lexema, TipoToken tipo, String colorCss) {
         this.lexema = lexema;
         this.tipo = tipo;
+        this.colorCss = colorCss;
     }
 
     public String getLexema() {
@@ -24,6 +26,10 @@ public class PalabraReservada {
 
     public TipoToken getTipo() {
         return tipo;
+    }
+
+    public String getColorCss() {
+        return colorCss;
     }
     
 }

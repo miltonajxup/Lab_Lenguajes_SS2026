@@ -32,7 +32,7 @@ public class AnalizadorComentario {
         String token = letraActualString + procesador.getSiguiente();
         PalabraReservada caracterComentario = esToken(token);
         if (caracterComentario == null) {
-            analizadorArchivo.agregarToken(TipoToken.SLASH, letraActualString, procesador.getColumna());
+            analizadorArchivo.agregarToken(palabras.getSlash(), letraActualString, procesador.getColumna());
             return;
         } 
         if (caracterComentario.getLexema().equals(palabras.getCOMENTARIO_LINEA())) {

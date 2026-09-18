@@ -17,59 +17,19 @@ import java.util.List;
 public class FormatoReporte {
     
     private final AnalizadorArchivo analizador;
+    private final Estilos estilos;
 
     public FormatoReporte(AnalizadorArchivo analizador) {
         this.analizador = analizador;
+        this.estilos = new Estilos();
     }
     
     public void escribirReporte(PrintWriter writer) {
         List<Token> tokens = analizador.getColeccionTokens();
         List<ErrorLexico> errores = analizador.getColeccionErrores();
-        String inicio = """
-                        <head>
-                            <style>
-                                body {
-                                    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 
-                                    Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-                                    font-size: 30px;
-                                }
-                                h1 {
-                                    text-align: center;
-                                    font-size: 40px;
-                                }
-                                .reporte {
-                                    width: 1500px;
-                                    border: 2px solid black;
-                                    margin: auto;
-                                    margin-bottom: 100px;
-                                    border-radius: 5px;
-                                    font-size: inherit;
-                                    padding: 20px;
-                                }
-                                .azul {
-                                    background-color: rgb(83, 150, 244);
-                                } 
-                                .verde {
-                                    background-color: rgb(104, 209, 86);
-                                }
-                                .celeste {
-                                    background-color: rgb(176, 247, 247);
-                                }
-                                td {
-                                    text-align: center;
-                                    border: 2px solid black;
-                                    margin: 5px;
-                                }
-                                .secundario {
-                                    text-align: center;
-                                    margin: 50px;
-                                }
-                            </style>
-                        </head>
-                        <body>
-                            <h1>Reportes Practica 1</h1>
-                                """;
+        String inicio = "<head> \n" + estilos.getCSS() + "\n</head> \n<body> \n\t<h1>Reportes Practica 1</h1>";
         writer.println(inicio);
+        
         String colunasTablaTokens = """
                             <div class="secundario">
                                 Reporte de tokens reconocidos
@@ -84,10 +44,11 @@ public class FormatoReporte {
                                 </tr>
                                     """;
         writer.print(colunasTablaTokens);
+        
         String finTabla = "    </table>";
-        if (tokens.size() > 0) {
+        if (!tokens.isEmpty()) {
             for (Token token : tokens) {
-                String lineaTabla = "<tr class=\"celeste\"> \n <td> " + token.getNumero() 
+                String lineaTabla = "<tr class=\"" + token.getColorCss() + "\"> \n <td> " + token.getNumero() 
                         + " </td> \n <td> " + token.getTipo() 
                         + " </td> \n <td> " + token.getLexema() 
                         + " </td> \n <td> " + token.getFila() 
@@ -119,7 +80,7 @@ public class FormatoReporte {
                                 </tr>
                                       """;
         writer.println(columnasTablaErrores);
-        if (errores.size() >  0) {
+        if (!errores.isEmpty()) {
             for (ErrorLexico error : errores) {
                 String lineaTabla = "<tr class=\"celeste\"> \n <td> " + error.getNumero() 
                         + " </td> \n <td> " + error.getErrorLexico() 

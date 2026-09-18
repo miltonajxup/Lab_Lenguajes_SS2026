@@ -23,6 +23,10 @@ public class ColeccionEstadisticas {
         iniciarLista(palabras);
     }
     
+    public List<EstadisticaToken> getEstadisticas() {
+        return estadisticas;
+    }
+    
     public void agregarEstadistica(TipoToken tipo) {
         for (EstadisticaToken estadistica : estadisticas) {
             if (estadistica.getTipoToken() == tipo) {
@@ -32,9 +36,15 @@ public class ColeccionEstadisticas {
         }
     }
     
+    public void reiniciarContadores() {
+        for (EstadisticaToken estadistica : estadisticas) {
+            estadistica.reiniciar();
+        }
+    }
+    
     private void iniciarLista(Palabras palabras) {
         for (PalabraReservada palabra : palabras.getPalabras()) {
-            estadisticas.add(new EstadisticaToken(palabra.getTipo()));
+            estadisticas.add(new EstadisticaToken(palabra));
         }
     }
     

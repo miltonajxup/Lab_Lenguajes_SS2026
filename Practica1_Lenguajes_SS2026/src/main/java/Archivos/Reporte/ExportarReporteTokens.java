@@ -4,6 +4,7 @@
  */
 package Archivos.Reporte;
 
+import AnalizadorPromtzal.AnalizadorArchivo;
 import Backend.ControladorDeArchivo;
 import Excepciones.ErrorDeArchivoException;
 import java.io.File;
@@ -19,13 +20,16 @@ public class ExportarReporteTokens {
     
     private final ControladorDeArchivo controlador;
     private final String ARCHIVO = "reportes_practica1_";
+    private final String ARCHIVO_ESTADISTICA = "reorte_estadistica_";
     private int NUMERO_GENERADO = 0;
     private final String EXTENSION = ".html";
     private final FormatoReporte formato;
+    private final FormatoEstadisticas formatoEstadistica;
 
-    public ExportarReporteTokens(ControladorDeArchivo controlador, FormatoReporte formato) {
+    public ExportarReporteTokens(ControladorDeArchivo controlador, AnalizadorArchivo analizador) {
         this.controlador = controlador;
-        this.formato = formato;
+        formato = new FormatoReporte(analizador);
+        formatoEstadistica = new FormatoEstadisticas(analizador);
     }
     
     public void exportarReporte() throws ErrorDeArchivoException {
@@ -37,6 +41,12 @@ public class ExportarReporteTokens {
         String ruta = controlador.getCarpeta() + ARCHIVO + NUMERO_GENERADO + EXTENSION;
         try (PrintWriter writer = new PrintWriter(new FileWriter(ruta))) {
             formato.escribirReporte(writer);
+        } catch (IOException e) {
+            throw new ErrorDeArchivoException("Error al acceder a la carpeta: " + e.getMessage());
+        }
+        String rutaEstadistica = controlador.getCarpeta() + ARCHIVO_ESTADISTICA + NUMERO_GENERADO + EXTENSION;
+        try (PrintWriter writer = new PrintWriter(new FileWriter(rutaEstadistica))) {
+            formatoEstadistica.escribirReporte(writer);
         } catch (IOException e) {
             throw new ErrorDeArchivoException("Error al acceder a la carpeta: " + e.getMessage());
         }

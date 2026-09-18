@@ -8,7 +8,6 @@ import AnalizadorPromtzal.AnalizadorArchivo;
 import AnalizadorPromtzal.ProcesadorLinea;
 import Automata.ReconocimientoAutomata;
 import Lenguaje.Palabras;
-import Lenguaje.TipoToken;
 
 /**
  *
@@ -32,7 +31,6 @@ public class AnalizadorCadena {
         String instruccion = "";
         boolean cerrarCadena = false;
         int columnaToken = 0;
-        procesador.saltarEspacios();
         if (procesador.getLetraActual() == palabras.getCOMILLAS()) {
             while (!cerrarCadena) {
                 procesador.avanzar();
@@ -51,9 +49,10 @@ public class AnalizadorCadena {
                     cerrarCadena = true;
                 }
             }
+            procesador.avanzar();
             procesador.saltarEspacios();
         }
-        analizadorArchivo.agregarToken(TipoToken.STRING, instruccion, columnaToken);
+        analizadorArchivo.agregarToken(palabras.getCadena(), instruccion, columnaToken);
     }
     
 }

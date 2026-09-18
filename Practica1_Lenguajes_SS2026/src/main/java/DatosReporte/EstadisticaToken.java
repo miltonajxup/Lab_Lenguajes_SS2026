@@ -4,6 +4,7 @@
  */
 package DatosReporte;
 
+import Lenguaje.PalabraReservada;
 import Lenguaje.TipoToken;
 
 /**
@@ -12,11 +13,11 @@ import Lenguaje.TipoToken;
  */
 public class EstadisticaToken {
     
-    private final TipoToken tipoToken;
+    private final PalabraReservada palabra;
     private int vecesEncontrada;
 
-    public EstadisticaToken(TipoToken tipoToken) {
-        this.tipoToken = tipoToken;
+    public EstadisticaToken(PalabraReservada palabra) {
+        this.palabra = palabra;
         vecesEncontrada = 0;
     }
     
@@ -25,7 +26,11 @@ public class EstadisticaToken {
     }
     
     public TipoToken getTipoToken() {
-        return tipoToken;
+        return palabra.getTipo();
+    }
+    
+    public String getColorCss() {
+        return palabra.getColorCss();
     }
     
     public void seEncontró() {

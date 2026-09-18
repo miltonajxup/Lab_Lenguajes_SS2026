@@ -15,9 +15,9 @@ import DatosReporte.Errores.ColeccionErrores;
 import DatosReporte.Errores.ErrorLexico;
 import Lenguaje.Alfabeto;
 import DatosReporte.ColeccionTokens;
+import DatosReporte.EstadisticaToken;
 import Lenguaje.PalabraReservada;
 import Lenguaje.Palabras;
-import Lenguaje.TipoToken;
 import Lenguaje.Token;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -32,7 +32,7 @@ public class AnalizadorArchivo {
     private final Palabras palabras;
     private final Alfabeto alfabeto;
     private final ProcesadorLinea procesador;
-    private ColeccionEstadisticas coleccionEstadisticas;
+    private final ColeccionEstadisticas coleccionEstadisticas;
     private ColeccionTokens coleccionTokens;
     private ColeccionErrores coleccionErrores;
     private final ReconocimientoAutomata reconocimiento;
@@ -69,14 +69,23 @@ public class AnalizadorArchivo {
         return coleccionErrores.getErrores();
     }
     
+    public List<EstadisticaToken> getEstadisticas() {
+        return coleccionEstadisticas.getEstadisticas();
+    }
+    
+    public int getFila() {
+        return fila;
+    }
+    
     public void reiniciarListas() {
         coleccionTokens = new ColeccionTokens(coleccionEstadisticas);
         coleccionErrores = new ColeccionErrores();
+        coleccionEstadisticas.reiniciarContadores();
         fila = 0;
     }
     
-    public void agregarToken(TipoToken tipo, String lexema, int columna) {
-        coleccionTokens.agregarToken(tipo, lexema, fila, columna);
+    public void agregarToken(PalabraReservada palabra, String lexema, int columna) {
+        coleccionTokens.agregarToken(palabra, lexema, fila, columna);
     }
     
     public void agregarError(String lexema, String descripcion, int columna) {
@@ -126,7 +135,10 @@ public class AnalizadorArchivo {
                 }
                 procesador.avanzar();
             }
-            reconocimiento.reconocer(procesador.getLetraActual());
+            
+            //Reiniciar estado porque o es espacio o fin de linea
+            reconocimiento.reiniciarEstado();
+            
             if (!"".equals(tokenActual)) {
                 analizadorIdentificador.analizarToken(tokenActual, columnaToken);
             }
@@ -156,7 +168,7 @@ public class AnalizadorArchivo {
         } else if (palabras.getCOMILLAS() == procesador.getLetraActual()) {
             analizadorCadena.revisarCadenaTexto();
         } else {
-            agregarToken(caracterEspecial.getTipo(), caracterEspecial.getLexema(), procesador.getColumna());
+            agregarToken(caracterEspecial, caracterEspecial.getLexema(), procesador.getColumna());
             reconocimiento.reconocerSimbolo();
         }
         if (!"".equals(tokenActual)) {

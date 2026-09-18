@@ -8,7 +8,6 @@ import AnalizadorPromtzal.AnalizadorArchivo;
 import Automata.ReconocimientoAutomata;
 import Lenguaje.PalabraReservada;
 import Lenguaje.Palabras;
-import Lenguaje.TipoToken;
 import java.util.List;
 
 /**
@@ -30,13 +29,13 @@ public class AnalizadorIdentificador {
     public void analizarToken(String token, int columnaToken) {
         PalabraReservada palabra = palabraValida(token);
         if (palabra != null) {
-            analizadorArchivo.agregarToken(palabra.getTipo(), palabra.getLexema(), columnaToken);
+            analizadorArchivo.agregarToken(palabra, palabra.getLexema(), columnaToken);
             return;
         }
         
         boolean identificadorValido = primerCaracterValido(token.charAt(0));
         if (identificadorValido) {
-            analizadorArchivo.agregarToken(TipoToken.IDENTIFICADOR, token, columnaToken);
+            analizadorArchivo.agregarToken(palabras.getIdentificador(), token, columnaToken);
             reconocimiento.reconocerIdentificador();
         } else {
             analizadorArchivo.agregarError(token, "Error: " + token + " porque los identificadores no pueden iniciar con " + token.charAt(0), columnaToken);

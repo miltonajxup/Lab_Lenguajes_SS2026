@@ -4,7 +4,7 @@
  */
 package DatosReporte;
 
-import Lenguaje.TipoToken;
+import Lenguaje.PalabraReservada;
 import Lenguaje.Token;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,10 +25,10 @@ public class ColeccionTokens {
         contador = 0;
     }
     
-    public void agregarToken(TipoToken tipo, String lexema, int fila, int columna) {
+    public void agregarToken(PalabraReservada palabra, String lexema, int fila, int columna) {
         contador++;
-        tokens.add(new Token(contador, tipo, lexema, fila, columna));
-        coleccion.agregarEstadistica(tipo);
+        tokens.add(new Token(contador, palabra, lexema, fila, columna));
+        coleccion.agregarEstadistica(palabra.getTipo());
     }
 
     public List<Token> getTokens() {

@@ -58,9 +58,9 @@ public class AnalizadorNumero {
         }
         
         if ((actual == ' ' || procesador.finLinea()) && contadorPunto == 0) {
-            analizadorArchivo.agregarToken(TipoToken.ENTERO, numero, columna);
+            analizadorArchivo.agregarToken(palabras.getEntero(), numero, columna);
         } else if ((actual == ' ' || procesador.finLinea()) && contadorPunto == 1) {
-            analizadorArchivo.agregarToken(TipoToken.DECIMAL, numero, columna);
+            analizadorArchivo.agregarToken(palabras.getDecimal(), numero, columna);
         } else if (contadorPunto > 1) {
             while (procesador.getLetraActual() != ' ' && !procesador.finLinea()) {
                 numero += procesador.getLetraActual();

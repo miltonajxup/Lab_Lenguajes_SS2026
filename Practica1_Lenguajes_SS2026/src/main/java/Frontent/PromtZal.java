@@ -4,6 +4,7 @@
  */
 package Frontent;
 
+import AnalizadorPromtzal.AnalizadorArchivo;
 import Archivos.Reporte.ExportarReporteTokens;
 import Automata.Escritor.ExportarAutomataDOT;
 import Backend.ControladorDeArchivo;
@@ -31,9 +32,10 @@ public class PromtZal extends javax.swing.JFrame {
     private final ControladorImagen controladorImagen;
     private final ExportarReporteTokens exportarReporteTokens;
     private final ExportarAutomataDOT exportarAutomata;
+    private final AnalizadorArchivo analizador;
     private final JFileChooser fileChooser;
     
-    public PromtZal(ControladorDeArchivo controlador, ControladorRegistros controladorRegistros, ControladorImagen controladorImagen, ExportarReporteTokens exportarReporteTokens, ExportarAutomataDOT exportarAutomata) {
+    public PromtZal(ControladorDeArchivo controlador, ControladorRegistros controladorRegistros, ControladorImagen controladorImagen, ExportarReporteTokens exportarReporteTokens, ExportarAutomataDOT exportarAutomata, AnalizadorArchivo analizador) {
         initComponents();
         this.setLocationRelativeTo(null);
         this.controlador = controlador;
@@ -41,6 +43,7 @@ public class PromtZal extends javax.swing.JFrame {
         this.controladorImagen = controladorImagen;
         this.exportarReporteTokens = exportarReporteTokens;
         this.exportarAutomata = exportarAutomata;
+        this.analizador = analizador;
         fileChooser = new JFileChooser();
         jTextArea1.setFont(new Font("Liberarion Sans", 0, 22));
         //mostrarOpcionesRegistros();
@@ -142,13 +145,13 @@ public class PromtZal extends javax.swing.JFrame {
         );
         espacioMostrarLayout.setVerticalGroup(
             espacioMostrarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 533, Short.MAX_VALUE)
+            .addGap(0, 567, Short.MAX_VALUE)
         );
 
         jScrollPane2.setViewportView(espacioMostrar);
 
         btnImagen.setFont(new java.awt.Font("Liberation Sans", 0, 22)); // NOI18N
-        btnImagen.setText("Generar Image y mostrar");
+        btnImagen.setText("Generar Imagen y mostrar");
         btnImagen.addActionListener(this::btnImagenActionPerformed);
 
         jDesktopPane1.setLayer(btnCargar, javax.swing.JLayeredPane.DEFAULT_LAYER);
@@ -193,11 +196,7 @@ public class PromtZal extends javax.swing.JFrame {
             .addGroup(jDesktopPane1Layout.createSequentialGroup()
                 .addGap(22, 22, 22)
                 .addGroup(jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jDesktopPane1Layout.createSequentialGroup()
-                        .addComponent(espacioBtnsMostrar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(81, Short.MAX_VALUE))
+                    .addComponent(espacioBtnsMostrar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jDesktopPane1Layout.createSequentialGroup()
                         .addGroup(jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(btnCargar)
@@ -206,10 +205,12 @@ public class PromtZal extends javax.swing.JFrame {
                             .addComponent(btnGuardarArchivo)
                             .addComponent(btnAnalizarArchivo))
                         .addGap(18, 18, 18)
-                        .addComponent(btnImagen)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 604, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(43, 43, 43))))
+                        .addComponent(btnImagen)))
+                .addGap(18, 18, 18)
+                .addGroup(jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jScrollPane1)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 569, Short.MAX_VALUE))
+                .addContainerGap(47, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -290,10 +291,11 @@ public class PromtZal extends javax.swing.JFrame {
 
     private void btnAnalizarArchivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAnalizarArchivoActionPerformed
         try {
+            analizador.reiniciarListas();
+            limipiarEspacio();
             controlador.analizarArchivo(jTextArea1.getText());
             exportarReporteTokens.exportarReporte();
             exportarAutomata.exportar();
-            
             mostrarMensaje("Se ha terminado de reconocer con exito");
         } catch (ErrorDeArchivoException e) {
             mostrarMensaje(e.getMessage());
@@ -301,7 +303,7 @@ public class PromtZal extends javax.swing.JFrame {
     }//GEN-LAST:event_btnAnalizarArchivoActionPerformed
 
     private void btnMostrarEstadisticasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMostrarEstadisticasActionPerformed
-        // TODO add your handling code here:
+        controladorRegistros.colocarRegistrosEstadistica();
     }//GEN-LAST:event_btnMostrarEstadisticasActionPerformed
 
     private void btnMostrarErroresActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMostrarErroresActionPerformed

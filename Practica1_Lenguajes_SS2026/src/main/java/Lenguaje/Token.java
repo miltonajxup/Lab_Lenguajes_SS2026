@@ -11,14 +11,14 @@ package Lenguaje;
 public class Token {
     
     private final int numero;
-    private final TipoToken tipo;
+    private final PalabraReservada palabra;
     private final String lexema;
     private final int fila;
     private final int columna;
 
-    public Token(int numero, TipoToken tipo, String lexema, int fila, int columna) {
+    public Token(int numero, PalabraReservada palabra, String lexema, int fila, int columna) {
         this.numero = numero;
-        this.tipo = tipo;
+        this.palabra = palabra;
         this.lexema = lexema;
         this.fila = fila;
         this.columna = columna;
@@ -29,7 +29,11 @@ public class Token {
     }
 
     public TipoToken getTipo() {
-        return tipo;
+        return palabra.getTipo();
+    }
+    
+    public String getColorCss() {
+        return palabra.getColorCss();
     }
 
     public String getLexema() {

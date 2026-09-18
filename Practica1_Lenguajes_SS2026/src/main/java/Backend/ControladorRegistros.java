@@ -6,6 +6,8 @@ package Backend;
 
 import AnalizadorPromtzal.AnalizadorArchivo;
 import DatosReporte.Errores.ErrorLexico;
+import DatosReporte.EstadisticaToken;
+import Frontent.PanelRegistroEstadistica;
 import Frontent.PanelRegistroToken;
 import Frontent.PromtZal;
 import Lenguaje.Token;
@@ -52,7 +54,18 @@ public class ControladorRegistros {
         }
     }
     
-    
+    public void colocarRegistrosEstadistica() {
+        List<EstadisticaToken> estadisticas = analizador.getEstadisticas();
+        ajustarEspacioRegistros(estadisticas.size() + 2);
+        PanelRegistroEstadistica totalLinea = new PanelRegistroEstadistica("Total de lineas leidas: ", analizador.getFila() + " lineas");
+        promtzal.agregarRegistro(totalLinea);
+        PanelRegistroEstadistica errores = new PanelRegistroEstadistica("Errores entcontrados: ", analizador.getColeccionErrores().size() + " errores");
+        promtzal.agregarRegistro(errores);
+        for (EstadisticaToken estadistica : estadisticas) {
+            PanelRegistroEstadistica panel = new PanelRegistroEstadistica("Tipo de token: " + estadistica.getTipoToken().name(), "Cantidad de Veces encontrada: " + estadistica.getVecesEncontradas());
+            promtzal.agregarRegistro(panel);
+        }
+    }
     
     private void ajustarEspacioRegistros(int filas) {
         promtzal.limipiarEspacio();

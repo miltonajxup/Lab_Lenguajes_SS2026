@@ -4,6 +4,7 @@
  */
 package Lenguaje;
 
+import Archivos.Reporte.Estilos;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,6 +38,11 @@ public class Palabras {
     private final PalabraReservada en;
     private final PalabraReservada como;
     private final PalabraReservada asignacion;
+    private final PalabraReservada cadena;
+    private final PalabraReservada slash;
+    private final PalabraReservada identificador;
+    private final PalabraReservada entero;
+    private final PalabraReservada decimal;
     private final char GUION_BAJO = '_';
     private final char COMILLAS = '"';
     private final char ARROBA = '@';
@@ -51,27 +57,32 @@ public class Palabras {
     private final String COMENT_BLOQUE_FIN = "*/";
     
     public Palabras() {
-        modelo = new PalabraReservada("@modelo", TipoToken.MODELO);
-        rol = new PalabraReservada("@rol", TipoToken.ROL);
-        formato = new PalabraReservada("@formato", TipoToken.FORMATO);
-        agente = new PalabraReservada("AGENTE", TipoToken.AGENTE);
-        contexto = new PalabraReservada("contexto", TipoToken.CONTEXTO);
-        variable = new PalabraReservada("variable", TipoToken.VARIABLE);
-        ejecutar = new PalabraReservada("EJECUTAR", TipoToken.EJECUTAR);
-        exportar = new PalabraReservada("EXPORTAR", TipoToken.EXPORTAR);
-        preguntar = new PalabraReservada("PREGUNTAR", TipoToken.PREGUNTAR);
-        generar = new PalabraReservada("GENERAR", TipoToken.GENERAR);
-        resumir = new PalabraReservada("RESUMIR", TipoToken.RESUMIR);
-        analizar = new PalabraReservada("ANALIZAR", TipoToken.ANALIZAR);
-        traducir = new PalabraReservada("TRADUCIR", TipoToken.TRADUCIR);
-        clasificar = new PalabraReservada("CLASIFICAR", TipoToken.CLASIFICAR);
-        extraer = new PalabraReservada("EXTRAER", TipoToken.EXTRAER);
-        cargar = new PalabraReservada("CARGAR", TipoToken.CARGAR);
-        sobre = new PalabraReservada("SOBRE", TipoToken.SOBRE); 
-        desde = new PalabraReservada("DESDE", TipoToken.DESDE);
-        en = new PalabraReservada("EN", TipoToken.EN);
-        como = new PalabraReservada("COMO", TipoToken.COMO);
-        asignacion = new PalabraReservada("->", TipoToken.ASIGNACION);
+        Estilos estilos = new Estilos();
+        modelo = new PalabraReservada("@modelo", TipoToken.MODELO, estilos.getCOLOR_DIRECTIVA());
+        rol = new PalabraReservada("@rol", TipoToken.ROL, estilos.getCOLOR_DIRECTIVA());
+        formato = new PalabraReservada("@formato", TipoToken.FORMATO, estilos.getCOLOR_DIRECTIVA());
+        agente = new PalabraReservada("AGENTE", TipoToken.AGENTE, estilos.getCOLOR_PALABRA_RESERVADA());
+        contexto = new PalabraReservada("contexto", TipoToken.CONTEXTO, estilos.getCOLOR_PALABRA_RESERVADA());
+        variable = new PalabraReservada("variable", TipoToken.VARIABLE, estilos.getCOLOR_PALABRA_RESERVADA());
+        ejecutar = new PalabraReservada("EJECUTAR", TipoToken.EJECUTAR, estilos.getCOLOR_COMANDO());
+        exportar = new PalabraReservada("EXPORTAR", TipoToken.EXPORTAR, estilos.getCOLOR_COMANDO());
+        preguntar = new PalabraReservada("PREGUNTAR", TipoToken.PREGUNTAR, estilos.getCOLOR_COMANDO());
+        generar = new PalabraReservada("GENERAR", TipoToken.GENERAR, estilos.getCOLOR_COMANDO());
+        resumir = new PalabraReservada("RESUMIR", TipoToken.RESUMIR, estilos.getCOLOR_COMANDO());
+        analizar = new PalabraReservada("ANALIZAR", TipoToken.ANALIZAR, estilos.getCOLOR_COMANDO());
+        traducir = new PalabraReservada("TRADUCIR", TipoToken.TRADUCIR, estilos.getCOLOR_COMANDO());
+        clasificar = new PalabraReservada("CLASIFICAR", TipoToken.CLASIFICAR, estilos.getCOLOR_COMANDO());
+        extraer = new PalabraReservada("EXTRAER", TipoToken.EXTRAER, estilos.getCOLOR_COMANDO());
+        cargar = new PalabraReservada("CARGAR", TipoToken.CARGAR, estilos.getCOLOR_CARGAR());
+        sobre = new PalabraReservada("SOBRE", TipoToken.SOBRE, estilos.getCOLOR_CONECTOR()); 
+        desde = new PalabraReservada("DESDE", TipoToken.DESDE, estilos.getCOLOR_CONECTOR());
+        en = new PalabraReservada("EN", TipoToken.EN, estilos.getCOLOR_CONECTOR());
+        como = new PalabraReservada("COMO", TipoToken.COMO, estilos.getCOLOR_CONECTOR());
+        asignacion = new PalabraReservada("->", TipoToken.ASIGNACION, estilos.getCOLOR_CONECTOR());
+        cadena = new PalabraReservada("cadena", TipoToken.STRING, estilos.getCOLOR_CADENA());
+        identificador = new PalabraReservada("identificador", TipoToken.IDENTIFICADOR, estilos.getCOLOR_IDENTIFICADOR());
+        entero = new PalabraReservada("entero", TipoToken.ENTERO, estilos.getCOLOR_NUMERO());
+        decimal = new PalabraReservada("decimal", TipoToken.DECIMAL, estilos.getCOLOR_NUMERO());
         
         palabras = new ArrayList<>();
         palabras.add(modelo);
@@ -97,21 +108,22 @@ public class Palabras {
         palabras.add(asignacion);
         
         caracteres = new ArrayList<>();
-        caracteres.add(new PalabraReservada(String.valueOf(COMILLAS), TipoToken.COMILLAS));
-        caracteres.add(new PalabraReservada("=", TipoToken.IGUAL));
-        caracteres.add(new PalabraReservada("+", TipoToken.CONCATENACION));
-        caracteres.add(new PalabraReservada("{", TipoToken.LLAVE_IZQUIERDA));
-        caracteres.add(new PalabraReservada("}", TipoToken.LLAVE_DERECHA));
-        caracteres.add(new PalabraReservada("(", TipoToken.PARENTESIS_IZQUIERDA));
-        caracteres.add(new PalabraReservada(")", TipoToken.PARENTESIS_DERECHA));
-        caracteres.add(new PalabraReservada(String.valueOf(ASTERISCO), TipoToken.ASTERISCO));
-        caracteres.add(new PalabraReservada(String.valueOf(PUNTO_Y_COMA), TipoToken.DELIMITADOR));
-        caracteres.add(new PalabraReservada(String.valueOf(COMA), TipoToken.DELIMITADOR));
-        caracteres.add(new PalabraReservada(String.valueOf(DOS_PUNTOS), TipoToken.DELIMITADOR));
-        caracteres.add(new PalabraReservada(COMENTARIO_LINEA, TipoToken.COMENTARIO_LINEA));
-        caracteres.add(new PalabraReservada(COMENT_BLOQUE_INICIO, TipoToken.COMENTARIO_BLOQUE));
-        caracteres.add(new PalabraReservada(COMENT_BLOQUE_FIN, TipoToken.COMENTARIO_BLOQUE));
-        caracteres.add(new PalabraReservada("/", TipoToken.SLASH));
+        caracteres.add(new PalabraReservada(String.valueOf(COMILLAS), TipoToken.COMILLAS, estilos.getCOLOR_SIMBOLO()));
+        caracteres.add(new PalabraReservada("=", TipoToken.IGUAL, estilos.getCOLOR_SIMBOLO()));
+        caracteres.add(new PalabraReservada("+", TipoToken.CONCATENACION, estilos.getCOLOR_SIMBOLO()));
+        caracteres.add(new PalabraReservada("{", TipoToken.LLAVE_IZQUIERDA, estilos.getCOLOR_SIMBOLO()));
+        caracteres.add(new PalabraReservada("}", TipoToken.LLAVE_DERECHA, estilos.getCOLOR_SIMBOLO()));
+        caracteres.add(new PalabraReservada("(", TipoToken.PARENTESIS_IZQUIERDA, estilos.getCOLOR_SIMBOLO()));
+        caracteres.add(new PalabraReservada(")", TipoToken.PARENTESIS_DERECHA, estilos.getCOLOR_SIMBOLO()));
+        caracteres.add(new PalabraReservada(String.valueOf(ASTERISCO), TipoToken.ASTERISCO, estilos.getCOLOR_SIMBOLO()));
+        caracteres.add(new PalabraReservada(String.valueOf(PUNTO_Y_COMA), TipoToken.DELIMITADOR, estilos.getCOLOR_SIMBOLO()));
+        caracteres.add(new PalabraReservada(String.valueOf(COMA), TipoToken.DELIMITADOR, estilos.getCOLOR_SIMBOLO()));
+        caracteres.add(new PalabraReservada(String.valueOf(DOS_PUNTOS), TipoToken.DELIMITADOR, estilos.getCOLOR_SIMBOLO()));
+        caracteres.add(new PalabraReservada(COMENTARIO_LINEA, TipoToken.COMENTARIO_LINEA, estilos.getCOLOR_SIMBOLO()));
+        caracteres.add(new PalabraReservada(COMENT_BLOQUE_INICIO, TipoToken.COMENTARIO_BLOQUE, estilos.getCOLOR_SIMBOLO()));
+        caracteres.add(new PalabraReservada(COMENT_BLOQUE_FIN, TipoToken.COMENTARIO_BLOQUE, estilos.getCOLOR_SIMBOLO()));
+        slash = new PalabraReservada(String.valueOf(SLASH), TipoToken.SLASH, estilos.getCOLOR_SIMBOLO());
+        caracteres.add(slash);
         
         numeros = new ArrayList<>();
         numeros.add("0");
@@ -217,6 +229,26 @@ public class Palabras {
 
     public String getASIGNACION() {
         return asignacion.getLexema();
+    }
+    
+    public PalabraReservada getCadena() {
+        return cadena;
+    }
+    
+    public PalabraReservada getSlash() {
+        return slash;
+    }
+    
+    public PalabraReservada getIdentificador() {
+        return identificador;
+    }
+
+    public PalabraReservada getEntero() {
+        return entero;
+    }
+
+    public PalabraReservada getDecimal() {
+        return decimal;
     }
     
     public List<PalabraReservada> getCaracteres() {
