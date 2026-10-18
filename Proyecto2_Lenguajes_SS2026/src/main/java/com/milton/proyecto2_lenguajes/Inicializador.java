@@ -4,6 +4,11 @@
  */
 package com.milton.proyecto2_lenguajes;
 
+import com.milton.proyecto2_lenguajes.compilador.AnalizadorSintactico;
+import com.milton.proyecto2_lenguajes.compilador.ControladorAnalisis;
+import com.milton.proyecto2_lenguajes.controladores.ControladorDeArchivo;
+import com.milton.proyecto2_lenguajes.frontend.PromtZal;
+
 /**
  *
  * @author milton
@@ -12,17 +17,13 @@ public class Inicializador {
     
     public void comenzar() {
         
-    }
-    
-    private void analizar() {
-        String comilla = "/*";
-        AnalizadorLexico analizador = new AnalizadorLexico(new FileReader("nombre_archivo.txt"));
+        ControladorAnalisis recolector = new ControladorAnalisis();
+        ControladorDeArchivo controlador = new ControladorDeArchivo(recolector);
+        AnalizadorSintactico analizador = new AnalizadorSintactico(recolector);
         
-        Token token;
+        PromtZal ventana = new PromtZal(controlador);
+        ventana.setVisible(true);
         
-        while ( (token = analizador.yylex()) != null ) {
-            //Utilizar el Token token
-        }
     }
     
 }
