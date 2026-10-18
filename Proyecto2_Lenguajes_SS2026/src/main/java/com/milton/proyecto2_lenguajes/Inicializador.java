@@ -4,7 +4,6 @@
  */
 package com.milton.proyecto2_lenguajes;
 
-import com.milton.proyecto2_lenguajes.compilador.AnalizadorSintactico;
 import com.milton.proyecto2_lenguajes.compilador.ControladorAnalisis;
 import com.milton.proyecto2_lenguajes.controladores.ControladorDeArchivo;
 import com.milton.proyecto2_lenguajes.frontend.PromtZal;
@@ -19,7 +18,6 @@ public class Inicializador {
         
         ControladorAnalisis recolector = new ControladorAnalisis();
         ControladorDeArchivo controlador = new ControladorDeArchivo(recolector);
-        AnalizadorSintactico analizador = new AnalizadorSintactico(recolector);
         
         PromtZal ventana = new PromtZal(controlador);
         ventana.setVisible(true);

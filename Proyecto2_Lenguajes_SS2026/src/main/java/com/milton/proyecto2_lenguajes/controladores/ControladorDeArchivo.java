@@ -18,14 +18,14 @@ import java.io.PrintWriter;
  */
 public class ControladorDeArchivo {
     
-    private final ControladorAnalisis recolector;
+    private final ControladorAnalisis controladorAnalisis;
     private final String EXTENSION_VALIDA = ".pz";
     private final int LONGITUD_EXTENSION = EXTENSION_VALIDA.length(); 
     private String rutaArchivo;
     private String carpeta;
     
-    public ControladorDeArchivo(ControladorAnalisis recolector) {
-        this.recolector = recolector;
+    public ControladorDeArchivo(ControladorAnalisis controladorAnalisis) {
+        this.controladorAnalisis = controladorAnalisis;
     }
     
     public void setRutaArchivo(String rutaArchivo) {
@@ -76,7 +76,7 @@ public class ControladorDeArchivo {
         if (rutaArchivo != null) {
             guardarCambios(contenidoActual);
             try (BufferedReader reader = new BufferedReader(new FileReader(rutaArchivo))) {
-                recolector.analizar(reader);
+                controladorAnalisis.analizar(reader);
             } catch (IOException e) {
                 throw new ErrorDeArchivoException("Ocurrio un error al leer el archivo: " + e.getMessage());
             }

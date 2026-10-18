@@ -797,168 +797,175 @@ class AnalizadorLexico {
       else {
         switch (zzAction < 0 ? zzAction : ZZ_ACTION[zzAction]) {
           case 1:
-            { return new Token(TipoToken.ERROR, yytext(), 
-	"No se pudo reconocer el caracter: " + yytext() + ". Encontrado en la linea " + (yyline + 1) + " y columna " + (yycolumn + 1) );
+            { return new Token(
+        TipoToken.ERROR,
+        yytext(),
+        yyline + 1,
+        yycolumn + 1,
+        "No se pudo reconocer el caracter: " + yytext()
+        + ". Encontrado en la linea " + (yyline + 1)
+        + " y columna " + (yycolumn + 1)
+    );
             }
           // fall through
           case 34: break;
           case 2:
-            { /* Ignorar Espacios en Blanco */
+            { /* Ignorar espacios en blanco */
             }
           // fall through
           case 35: break;
           case 3:
-            { return new Token(TipoToken.PARENTESIS_IZQ, yytext());
+            { return new Token(TipoToken.PARENTESIS_IZQ, yytext(), yyline + 1, yycolumn + 1);
             }
           // fall through
           case 36: break;
           case 4:
-            { return new Token(TipoToken.PARENTESIS_DER, yytext());
+            { return new Token(TipoToken.PARENTESIS_DER, yytext(), yyline + 1, yycolumn + 1);
             }
           // fall through
           case 37: break;
           case 5:
-            { return new Token(TipoToken.CONCATENACION, yytext());
+            { return new Token(TipoToken.CONCATENACION, yytext(), yyline + 1, yycolumn + 1);
             }
           // fall through
           case 38: break;
           case 6:
-            { return new Token(TipoToken.COMA, yytext());
+            { return new Token(TipoToken.COMA, yytext(), yyline + 1, yycolumn + 1);
             }
           // fall through
           case 39: break;
           case 7:
-            { return new Token(TipoToken.ENTERO, yytext());
+            { return new Token(TipoToken.ENTERO, yytext(), yyline + 1, yycolumn + 1);
             }
           // fall through
           case 40: break;
           case 8:
-            { return new Token(TipoToken.ASIGNACION, yytext());
+            { return new Token(TipoToken.ASIGNACION, yytext(), yyline + 1, yycolumn + 1);
             }
           // fall through
           case 41: break;
           case 9:
-            { return new Token(TipoToken.IDENTIFICADOR, yytext());
+            { return new Token(TipoToken.IDENTIFICADOR, yytext(), yyline + 1, yycolumn + 1);
             }
           // fall through
           case 42: break;
           case 10:
-            { return new Token(TipoToken.LLAVE_IZQ, yytext());
+            { return new Token(TipoToken.LLAVE_IZQ, yytext(), yyline + 1, yycolumn + 1);
             }
           // fall through
           case 43: break;
           case 11:
-            { return new Token(TipoToken.LLAVE_DER, yytext());
+            { return new Token(TipoToken.LLAVE_DER, yytext(), yyline + 1, yycolumn + 1);
             }
           // fall through
           case 44: break;
           case 12:
-            { return new Token(TipoToken.CADENA, yytext());
+            { return new Token(TipoToken.CADENA, yytext(), yyline + 1, yycolumn + 1);
             }
           // fall through
           case 45: break;
           case 13:
-            { return new Token(TipoToken.ASIGNAR, yytext());
+            { return new Token(TipoToken.ASIGNAR, yytext(), yyline + 1, yycolumn + 1);
             }
           // fall through
           case 46: break;
           case 14:
-            { return new Token(TipoToken.EN, yytext());
+            { return new Token(TipoToken.EN, yytext(), yyline + 1, yycolumn + 1);
             }
           // fall through
           case 47: break;
           case 15:
-            { return new Token(TipoToken.ROL, yytext());
+            { return new Token(TipoToken.ROL, yytext(), yyline + 1, yycolumn + 1);
             }
           // fall through
           case 48: break;
           case 16:
-            { return new Token(TipoToken.COMO, yytext());
+            { return new Token(TipoToken.COMO, yytext(), yyline + 1, yycolumn + 1);
             }
           // fall through
           case 49: break;
           case 17:
-            { return new Token(TipoToken.DESDE, yytext());
+            { return new Token(TipoToken.DESDE, yytext(), yyline + 1, yycolumn + 1);
             }
           // fall through
           case 50: break;
           case 18:
-            { return new Token(TipoToken.SOBRE, yytext());
+            { return new Token(TipoToken.SOBRE, yytext(), yyline + 1, yycolumn + 1);
             }
           // fall through
           case 51: break;
           case 19:
-            { return new Token(TipoToken.AGENTE, yytext());
+            { return new Token(TipoToken.AGENTE, yytext(), yyline + 1, yycolumn + 1);
             }
           // fall through
           case 52: break;
           case 20:
-            { return new Token(TipoToken.CARGAR, yytext());
+            { return new Token(TipoToken.CARGAR, yytext(), yyline + 1, yycolumn + 1);
             }
           // fall through
           case 53: break;
           case 21:
-            { return new Token(TipoToken.MODELO, yytext());
+            { return new Token(TipoToken.MODELO, yytext(), yyline + 1, yycolumn + 1);
             }
           // fall through
           case 54: break;
           case 22:
-            { return new Token(TipoToken.EXTRAER, yytext());
+            { return new Token(TipoToken.EXTRAER, yytext(), yyline + 1, yycolumn + 1);
             }
           // fall through
           case 55: break;
           case 23:
-            { return new Token(TipoToken.GENERAR, yytext());
+            { return new Token(TipoToken.GENERAR, yytext(), yyline + 1, yycolumn + 1);
             }
           // fall through
           case 56: break;
           case 24:
-            { return new Token(TipoToken.RESUMIR, yytext());
+            { return new Token(TipoToken.RESUMIR, yytext(), yyline + 1, yycolumn + 1);
             }
           // fall through
           case 57: break;
           case 25:
-            { return new Token(TipoToken.FORMATO, yytext());
+            { return new Token(TipoToken.FORMATO, yytext(), yyline + 1, yycolumn + 1);
             }
           // fall through
           case 58: break;
           case 26:
-            { return new Token(TipoToken.ANALIZAR, yytext());
+            { return new Token(TipoToken.ANALIZAR, yytext(), yyline + 1, yycolumn + 1);
             }
           // fall through
           case 59: break;
           case 27:
-            { return new Token(TipoToken.EJECUTAR, yytext());
+            { return new Token(TipoToken.EJECUTAR, yytext(), yyline + 1, yycolumn + 1);
             }
           // fall through
           case 60: break;
           case 28:
-            { return new Token(TipoToken.EXPORTAR, yytext());
+            { return new Token(TipoToken.EXPORTAR, yytext(), yyline + 1, yycolumn + 1);
             }
           // fall through
           case 61: break;
           case 29:
-            { return new Token(TipoToken.TRADUCIR, yytext());
+            { return new Token(TipoToken.TRADUCIR, yytext(), yyline + 1, yycolumn + 1);
             }
           // fall through
           case 62: break;
           case 30:
-            { return new Token(TipoToken.CONTEXTO, yytext());
+            { return new Token(TipoToken.CONTEXTO, yytext(), yyline + 1, yycolumn + 1);
             }
           // fall through
           case 63: break;
           case 31:
-            { return new Token(TipoToken.VARIABLE, yytext());
+            { return new Token(TipoToken.VARIABLE, yytext(), yyline + 1, yycolumn + 1);
             }
           // fall through
           case 64: break;
           case 32:
-            { return new Token(TipoToken.PREGUNTAR, yytext());
+            { return new Token(TipoToken.PREGUNTAR, yytext(), yyline + 1, yycolumn + 1);
             }
           // fall through
           case 65: break;
           case 33:
-            { return new Token(TipoToken.CLASIFICAR, yytext());
+            { return new Token(TipoToken.CLASIFICAR, yytext(), yyline + 1, yycolumn + 1);
             }
           // fall through
           case 66: break;
