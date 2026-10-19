@@ -6,8 +6,11 @@ package com.milton.proyecto2_lenguajes.compilador;
 
 import com.milton.proyecto2_lenguajes.compilador.ast.NodoArbol;
 import com.milton.proyecto2_lenguajes.compilador.errores.ErrorSintactico;
-import com.milton.proyecto2_lenguajes.lenguaje.TipoToken;
-import com.milton.proyecto2_lenguajes.lenguaje.Token;
+import com.milton.proyecto2_lenguajes.compilador.reglas.Ambito;
+import com.milton.proyecto2_lenguajes.compilador.reglas.TipoSimbolo;
+import com.milton.proyecto2_lenguajes.compilador.reglas.TipoToken;
+import com.milton.proyecto2_lenguajes.compilador.reglas.Token;
+import com.milton.proyecto2_lenguajes.compilador.simbolos.Simbolo;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,13 +22,15 @@ public class AnalizadorSintactico {
     
     private final List<Token> tokens;
     private final List<ErrorSintactico> errores;
-    private Token actual;
     private final NodoArbol programa;
+    private final List<Simbolo> simbolos;
+    private Token actual;
     private int indice;
     
-    public AnalizadorSintactico(List<Token> tokens, NodoArbol programa) {
+    public AnalizadorSintactico(List<Token> tokens, NodoArbol programa,List<Simbolo> simbolos) {
         this.tokens = tokens;
         this.programa = programa;
+        this.simbolos = simbolos;
         errores = new ArrayList<>();
     }
     
@@ -45,23 +50,24 @@ public class AnalizadorSintactico {
         TipoToken tipo = actual.getTipo();
         if (tipo == TipoToken.MODELO || tipo == TipoToken.ROL | tipo == TipoToken.FORMATO) {
             
+            Token token = actual;
             if (!avanzarRevisandoError(TipoToken.CADENA, TipoToken.CADENA)) {
                 padrePrincipal.agregarHijo(new NodoArbol(tipo, actual.getLexema()));
             }
+            simbolos.add(new Simbolo(token.getLexema(), TipoSimbolo.CONFIGURACION, Ambito.GLOBAL, tipo, token.getFila(), token.getColumna(), actual.getLexema()));
         } else if (tipo == TipoToken.AGENTE) {
             
-            //Revisa que lo que siga de AGENTE sea un IDENTIFICADOR
             if (avanzarRevisandoError(TipoToken.IDENTIFICADOR, TipoToken.IDENTIFICADOR)) {
                 return;
             }
-            
             NodoArbol agente = new NodoArbol(tipo, actual.getLexema());
+            simbolos.add(new Simbolo(actual.getLexema(), TipoSimbolo.AGENTE, Ambito.GLOBAL, TipoToken.IDENTIFICADOR, actual.getFila(), actual.getColumna()));
             
             if (avanzarRevisandoError(TipoToken.LLAVE_IZQ, TipoToken.LLAVE_DER)) {
                 return;
             }
-            
             avanzar();
+            
             while (actual.getTipo() != TipoToken.LLAVE_DER && !esFinal()) {
                 analizarAgente(agente);
             }
@@ -121,17 +127,17 @@ public class AnalizadorSintactico {
             if (avanzarRevisandoError(TipoToken.CADENA, TipoToken.CADENA)) {
                 return;
             }
-            
             NodoArbol contexto = new NodoArbol(tipo, actual.getLexema());
-            
             agente.agregarHijo(contexto);
+            simbolos.add(new Simbolo("contexto", TipoSimbolo.CONFIGURACION, Ambito.AGENTE, tipo, actual.getFila(), actual.getColumna(), actual.getLexema()));
+            
         } else if (tipo == TipoToken.VARIABLE) {
             
             if (avanzarRevisandoError(TipoToken.IDENTIFICADOR, TipoToken.IDENTIFICADOR)) {
                 return;
             }
-            
             NodoArbol variable = new NodoArbol(tipo, actual.getLexema());
+            simbolos.add(new Simbolo(actual.getLexema(), TipoSimbolo.VARIABLE, Ambito.AGENTE, tipo, actual.getFila(), actual.getColumna()));
             
             if (avanzarRevisandoError(TipoToken.ASIGNACION, TipoToken.ASIGNACION)) {
                 return;
@@ -161,15 +167,16 @@ public class AnalizadorSintactico {
             preguntar.agregarHijo(sobre);
             
             agregarNodoAsinar(preguntar);
+            simbolos.add(new Simbolo(actual.getLexema(), TipoSimbolo.ASIGNAR, Ambito.AGENTE, tipo, actual.getFila(), actual.getColumna()));
             
         } else if (tipo == TipoToken.GENERAR) {
             
             if (avanzarRevisandoError(TipoToken.IDENTIFICADOR, TipoToken.IDENTIFICADOR)) {
                 return;
             }
-            
             NodoArbol generar = new NodoArbol(TipoToken.GENERAR, actual.getLexema());
             agente.agregarHijo(generar);
+            simbolos.add(new Simbolo(actual.getLexema(), TipoSimbolo.VARIABLE, Ambito.AGENTE, tipo, actual.getFila(), actual.getColumna()));
             
             if (avanzarRevisandoError(TipoToken.DESDE, TipoToken.IDENTIFICADOR)) {
                 return;
@@ -207,6 +214,7 @@ public class AnalizadorSintactico {
             resumir.agregarHijo(id);
             
             agregarNodoAsinar(resumir);
+            simbolos.add(new Simbolo(actual.getLexema(), TipoSimbolo.ASIGNAR, Ambito.AGENTE, tipo, actual.getFila(), actual.getColumna()));
             
         } else if (tipo == TipoToken.ANALIZAR) {
             
@@ -226,6 +234,7 @@ public class AnalizadorSintactico {
             analizar.agregarHijo(sobre);
             
             agregarNodoAsinar(analizar);
+            simbolos.add(new Simbolo(actual.getLexema(), TipoSimbolo.ASIGNAR, Ambito.AGENTE, tipo, actual.getFila(), actual.getColumna()));
             
         } else if (tipo == TipoToken.TRADUCIR) {
             
@@ -238,6 +247,7 @@ public class AnalizadorSintactico {
             agregarEnConCadena(traducir);
             
             agregarNodoAsinar(traducir);
+            simbolos.add(new Simbolo(actual.getLexema(), TipoSimbolo.ASIGNAR, Ambito.AGENTE, tipo, actual.getFila(), actual.getColumna()));
             
         } else if (tipo == TipoToken.CLASIFICAR) {
             
@@ -250,6 +260,7 @@ public class AnalizadorSintactico {
             agregarEnConCadena(clasificar);
             
             agregarNodoAsinar(clasificar);
+            simbolos.add(new Simbolo(actual.getLexema(), TipoSimbolo.ASIGNAR, Ambito.AGENTE, tipo, actual.getFila(), actual.getColumna()));
             
         } else if (tipo == TipoToken.EXTRAER) {
             
@@ -269,6 +280,7 @@ public class AnalizadorSintactico {
             extraer.agregarHijo(desde);
             
             agregarNodoAsinar(extraer);
+            simbolos.add(new Simbolo(actual.getLexema(), TipoSimbolo.ASIGNAR, Ambito.AGENTE, tipo, actual.getFila(), actual.getColumna()));
             
         } else {
             errores.add(new ErrorSintactico(
@@ -335,6 +347,7 @@ public class AnalizadorSintactico {
             
             agregarNodoAsinar(generar);
         }
+        simbolos.add(new Simbolo(actual.getLexema(), TipoSimbolo.ASIGNAR, Ambito.AGENTE, tipo, actual.getFila(), actual.getColumna()));
     }
     
     private void agregarNodoAsinar(NodoArbol nodo) {

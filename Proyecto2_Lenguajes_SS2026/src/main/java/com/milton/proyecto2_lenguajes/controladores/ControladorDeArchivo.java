@@ -101,7 +101,7 @@ public class ControladorDeArchivo {
         rutaArchivo = archivo.getAbsolutePath();
         carpeta = archivo.getParent();
         while (archivo.exists()) {
-            rutaArchivo = archivo.getParent() + "/" + archivo.getName() + contador;
+            rutaArchivo = archivo.getParent() + "/" + contador + archivo.getName();
             archivo = new File(rutaArchivo);
             contador++;
         }

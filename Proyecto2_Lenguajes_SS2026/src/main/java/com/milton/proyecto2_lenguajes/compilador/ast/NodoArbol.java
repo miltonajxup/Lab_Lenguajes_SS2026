@@ -4,7 +4,7 @@
  */
 package com.milton.proyecto2_lenguajes.compilador.ast;
 
-import com.milton.proyecto2_lenguajes.lenguaje.TipoToken;
+import com.milton.proyecto2_lenguajes.compilador.reglas.TipoToken;
 import java.util.ArrayList;
 import java.util.List;
 

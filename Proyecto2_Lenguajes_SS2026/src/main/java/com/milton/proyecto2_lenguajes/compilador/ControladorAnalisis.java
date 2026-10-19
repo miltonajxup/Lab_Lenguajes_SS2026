@@ -5,8 +5,9 @@
 package com.milton.proyecto2_lenguajes.compilador;
 
 import com.milton.proyecto2_lenguajes.compilador.ast.NodoArbol;
-import com.milton.proyecto2_lenguajes.lenguaje.TipoToken;
-import com.milton.proyecto2_lenguajes.lenguaje.Token;
+import com.milton.proyecto2_lenguajes.compilador.reglas.TipoToken;
+import com.milton.proyecto2_lenguajes.compilador.reglas.Token;
+import com.milton.proyecto2_lenguajes.compilador.simbolos.Simbolo;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,6 +22,7 @@ public class ControladorAnalisis {
     private List<Token> tokens;
     private List<Token> errores;
     private NodoArbol programa;
+    private List<Simbolo> simbolos;
 
     public List<Token> getTokens() {
         return tokens;
@@ -33,10 +35,15 @@ public class ControladorAnalisis {
     public NodoArbol getPrograma() {
         return programa;
     }
+
+    public List<Simbolo> getSimbolos() {
+        return simbolos;
+    }
     
     public void analizar(BufferedReader reader) throws IOException {
         tokens = new ArrayList<>();
         errores = new ArrayList<>();
+        simbolos = new ArrayList<>();
         
         AnalizadorLexico analizador = new AnalizadorLexico(reader);
         
@@ -51,7 +58,7 @@ public class ControladorAnalisis {
         
         programa = new NodoArbol(TipoToken.PROGRAMA, "Programa Promtzal");
         
-        AnalizadorSintactico analizadorSintactico = new AnalizadorSintactico(tokens, programa);
+        AnalizadorSintactico analizadorSintactico = new AnalizadorSintactico(tokens, programa, simbolos);
         analizadorSintactico.analizar();
         
     }

@@ -4,8 +4,8 @@
 
 package com.milton.proyecto2_lenguajes.compilador;
 
-import com.milton.proyecto2_lenguajes.lenguaje.TipoToken;
-import com.milton.proyecto2_lenguajes.lenguaje.Token;
+import com.milton.proyecto2_lenguajes.compilador.reglas.TipoToken;
+import com.milton.proyecto2_lenguajes.compilador.reglas.Token;
 
 
 @SuppressWarnings("fallthrough")
