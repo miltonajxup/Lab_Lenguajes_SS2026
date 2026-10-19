@@ -52,5 +52,7 @@ public enum TipoToken {
     ENTERO,
     DECIMAL, 
     
-    ERROR
+    PUNTO_Y_COMA, 
+    ERROR,
+    PROGRAMA
 }
