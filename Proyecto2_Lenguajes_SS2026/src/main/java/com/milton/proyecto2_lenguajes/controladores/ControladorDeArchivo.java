@@ -6,6 +6,7 @@ package com.milton.proyecto2_lenguajes.controladores;
 
 import com.milton.proyecto2_lenguajes.compilador.ControladorAnalisis;
 import com.milton.proyecto2_lenguajes.exceptions.ErrorDeArchivoException;
+import com.milton.proyecto2_lenguajes.exceptions.ValorInvalidoException;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -20,66 +21,97 @@ public class ControladorDeArchivo {
     
     private final ControladorAnalisis controladorAnalisis;
     private final String EXTENSION_VALIDA = ".pz";
-    private final int LONGITUD_EXTENSION = EXTENSION_VALIDA.length(); 
-    private String rutaArchivo;
-    private String carpeta;
+    private final int LONGITUD_EXTENSION = EXTENSION_VALIDA.length();
+    private final String CARPETA_GENERADA = "/Archivos_Generados/";
+    private final String[] formatosGuardado;
+    private final String NOMBRE_PROMT = "Promt";
+    private int promtsGenerados;
     
     public ControladorDeArchivo(ControladorAnalisis controladorAnalisis) {
         this.controladorAnalisis = controladorAnalisis;
+        formatosGuardado = new String[2];
+        formatosGuardado[0] = ".md";
+        formatosGuardado[1] = ".txt";
+        promtsGenerados = 0;
     }
     
-    public void setRutaArchivo(String rutaArchivo) {
-        this.rutaArchivo = rutaArchivo;
-    }
-    
-    public String getCarpeta() {
-        return carpeta;
+    public String[] getFormatosGuardado() {
+        return formatosGuardado;
     }
     
     public RespuestaArchivo cargarArchivo(File archivo) throws ErrorDeArchivoException {
-        RespuestaArchivo respuesta = verificarExtension(archivo.getAbsolutePath());
+        String nombre = archivo.getName();
+        RespuestaArchivo respuesta = verificarExtension(nombre);
         if (!respuesta.isValido()) {
             return respuesta;
         }
-        rutaArchivo = archivo.getAbsolutePath();
-        carpeta = archivo.getParent() + "/Archivos_Generados/";
         
         String textoArchivo = "";
+        int lineas = 0;
         try (BufferedReader reader = new BufferedReader(new FileReader(archivo))) {
             String linea = reader.readLine();
             while (linea != null) {
+                lineas++;
                 textoArchivo += linea + "\n";
                 linea = reader.readLine();
             }
         } catch (IOException e) {
-            throw new ErrorDeArchivoException("Ocurrio un error al cargar el archivo " + archivo.getName() + " : " + e.getMessage());
+            throw new ErrorDeArchivoException("Ocurrio un error al cargar el archivo " + nombre + " : " + e.getMessage());
         }
-        return new RespuestaArchivo(true, textoArchivo);
+        return new RespuestaArchivo(true, textoArchivo, lineas);
     }
     
-    public void crearArchivo(File archivo, String contenidoArchivo) throws ErrorDeArchivoException {
-        revisarExistencia(archivo);
-        guardarCambios(contenidoArchivo);
+    public File crearArchivo(File archivo) throws ErrorDeArchivoException {
+        int contador = 1;
+        String rutaArchivo = archivo.getAbsolutePath();
+        while (archivo.exists()) {
+            rutaArchivo = archivo.getParent() + "/" + contador + archivo.getName();
+            archivo = new File(rutaArchivo);
+            contador++;
+        }
+        archivo = new File(rutaArchivo + EXTENSION_VALIDA);
+        try (PrintWriter writer = new PrintWriter(archivo)) {
+            writer.print("");
+        } catch (IOException e) {
+            throw new ErrorDeArchivoException("Ocurrio un error al crear un archivo: " + e.getMessage());
+        }
+        return archivo;
     }
     
-    public void guardarCambios(String contenidoActual) throws ErrorDeArchivoException {
-        if (rutaArchivo != null) {
-            try (PrintWriter writer = new PrintWriter(new File(rutaArchivo))) {
+    public void guardarCambios(File archivo, String contenidoActual) throws ErrorDeArchivoException {
+        if (archivo.exists()) {
+            try (PrintWriter writer = new PrintWriter(archivo)) {
                 writer.print(contenidoActual);
             } catch (IOException e) {
-                throw new ErrorDeArchivoException("Ocurrio un error al guardar los cambios del archivo " + rutaArchivo);
+                throw new ErrorDeArchivoException("Ocurrio un error al guardar los cambios del archivo " + archivo.getName());
             }
         }
     }
     
-    public void analizarArchivo(String contenidoActual) throws ErrorDeArchivoException {
-        if (rutaArchivo != null) {
-            guardarCambios(contenidoActual);
-            try (BufferedReader reader = new BufferedReader(new FileReader(rutaArchivo))) {
+    public ResultadoAnalisis analizarArchivo(File archivo, String contenidoActual, int eleccion) throws ErrorDeArchivoException, ValorInvalidoException {
+        String formato = buscarFormato(eleccion);
+        if (archivo.exists()) {
+            guardarCambios(archivo, contenidoActual);
+            try (BufferedReader reader = new BufferedReader(new FileReader(archivo))) {
                 controladorAnalisis.analizar(reader);
             } catch (IOException e) {
                 throw new ErrorDeArchivoException("Ocurrio un error al leer el archivo: " + e.getMessage());
             }
+        }
+        generarArchivoPromt(archivo.getParent(), formato);
+        return controladorAnalisis.getResultado();
+    }
+    
+    private void generarArchivoPromt(String carpeta, String formato) throws ErrorDeArchivoException {
+        String promt = controladorAnalisis.getResultado().getPromt();
+        promtsGenerados++;
+        String carpetaCompleta = carpeta + CARPETA_GENERADA;
+        String ruta = carpetaCompleta + NOMBRE_PROMT + promtsGenerados + formato;
+        revisarExistenciaCarpeta(carpetaCompleta);
+        try (PrintWriter writer = new PrintWriter(new File(ruta))) {
+            writer.print(promt);
+        } catch (IOException e) {
+            throw new ErrorDeArchivoException("Ocurrio un error al generar el arhivo del promt: " + e.getMessage());
         }
     }
     
@@ -96,14 +128,21 @@ public class ControladorDeArchivo {
         return new RespuestaArchivo(true, "No existe error");
     }
     
-    private void revisarExistencia(File archivo) {
-        int contador = 1;
-        rutaArchivo = archivo.getAbsolutePath();
-        carpeta = archivo.getParent();
-        while (archivo.exists()) {
-            rutaArchivo = archivo.getParent() + "/" + contador + archivo.getName();
-            archivo = new File(rutaArchivo);
-            contador++;
+    private String buscarFormato(int eleccion) throws ValorInvalidoException {
+        switch (eleccion) {
+            case 0:
+                return formatosGuardado[eleccion];
+            case 1:
+                return formatosGuardado[eleccion];
+            default: 
+                throw new ValorInvalidoException("El formato es invalido");
+        }
+    }
+    
+    private void revisarExistenciaCarpeta(String carpeta) {
+        File file = new File(carpeta);
+        if (!file.exists()) {
+            file.mkdirs();
         }
     }
     

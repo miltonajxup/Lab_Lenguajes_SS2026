@@ -12,10 +12,17 @@ public class RespuestaArchivo {
     
     private final boolean valido;
     private final String mensaje;
+    private int lineas;
 
     public RespuestaArchivo(boolean valido, String mensaje) {
         this.valido = valido;
         this.mensaje = mensaje;
+    }
+
+    public RespuestaArchivo(boolean valido, String mensaje, int lineas) {
+        this.valido = valido;
+        this.mensaje = mensaje;
+        this.lineas = lineas;
     }
 
     public boolean isValido() {
@@ -24,6 +31,10 @@ public class RespuestaArchivo {
 
     public String getMensaje() {
         return mensaje;
+    }
+
+    public int getLineas() {
+        return lineas;
     }
     
 }
