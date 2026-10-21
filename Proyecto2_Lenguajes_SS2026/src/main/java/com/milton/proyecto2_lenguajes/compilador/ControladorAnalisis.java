@@ -10,6 +10,7 @@ import com.milton.proyecto2_lenguajes.compilador.reglas.TipoToken;
 import com.milton.proyecto2_lenguajes.compilador.reglas.Token;
 import com.milton.proyecto2_lenguajes.compilador.simbolos.Simbolo;
 import com.milton.proyecto2_lenguajes.controladores.ResultadoAnalisis;
+import com.milton.proyecto2_lenguajes.controladores.ResultadoReportes;
 import com.milton.proyecto2_lenguajes.resultados.OrdenarResultados;
 import com.milton.proyecto2_lenguajes.resultados.ControladorPromt;
 import java.io.BufferedReader;
@@ -29,6 +30,7 @@ public class ControladorAnalisis {
     private NodoArbol programa;
     private List<Simbolo> simbolos;
     private ResultadoAnalisis resultado;
+    private ResultadoReportes resultadoReporte;
 
     public NodoArbol getPrograma() {
         return programa;
@@ -37,10 +39,15 @@ public class ControladorAnalisis {
     public ResultadoAnalisis getResultado() {
         return resultado;
     }
+
+    public ResultadoReportes getResultadoReporte() {
+        return resultadoReporte;
+    }
     
     public void analizar(BufferedReader reader) throws IOException {
         tokens = new ArrayList<>();
         errores = new ArrayList<>();
+        erroresSint = new ArrayList<>();
         simbolos = new ArrayList<>();
         
         AnalizadorLexico analizador = new AnalizadorLexico(reader);
@@ -68,6 +75,7 @@ public class ControladorAnalisis {
         String[][] simbolosEncontrados = ordenar.ordenarSimbolos(simbolos);
         
         resultado = new  ResultadoAnalisis(promt.getPromt(), erroresSintacticos, erroresLexicos, simbolosEncontrados);
+        resultadoReporte = new ResultadoReportes(promt.getPromt(), programa, errores, erroresSint, simbolos);
         
     }
     

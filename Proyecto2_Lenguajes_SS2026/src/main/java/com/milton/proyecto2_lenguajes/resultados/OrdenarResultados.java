@@ -42,7 +42,7 @@ public class OrdenarResultados {
     }
     
     public String[][] ordenarSimbolos(List<Simbolo> simbolos) {
-        String[][] valores = new String[simbolos.size()][7];
+        String[][] valores = new String[simbolos.size()][6];
         int i = 0;
         for (Simbolo simbolo : simbolos) {
             valores[i][0] = simbolo.getNombre();
@@ -51,11 +51,6 @@ public class OrdenarResultados {
             valores[i][3] = simbolo.getTipoToken().name();
             valores[i][4] = String.valueOf(simbolo.getFila());
             valores[i][5] = String.valueOf(simbolo.getColumna());
-            if (simbolo.getValor() == null) {
-                valores[i][6] = simbolo.getValor();
-            } else {
-                valores[i][6] = "---";
-            }
             i++;
         }
         return valores;

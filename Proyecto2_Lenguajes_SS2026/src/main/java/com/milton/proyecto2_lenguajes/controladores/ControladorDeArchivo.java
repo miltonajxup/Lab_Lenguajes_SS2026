@@ -5,11 +5,9 @@
 package com.milton.proyecto2_lenguajes.controladores;
 
 import com.milton.proyecto2_lenguajes.compilador.ControladorAnalisis;
-import com.milton.proyecto2_lenguajes.compilador.ast.NodoArbol;
 import com.milton.proyecto2_lenguajes.exceptions.ErrorDeArchivoException;
 import com.milton.proyecto2_lenguajes.exceptions.ValorInvalidoException;
-import com.milton.proyecto2_lenguajes.reportes.ReporteArbol;
-import com.milton.proyecto2_lenguajes.resultados.VisualizadorAST;
+import com.milton.proyecto2_lenguajes.reportes.GenerarReportes;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -25,17 +23,15 @@ public class ControladorDeArchivo {
     private final ControladorAnalisis controladorAnalisis;
     private final String EXTENSION_VALIDA = ".pz";
     private final int LONGITUD_EXTENSION = EXTENSION_VALIDA.length();
-    private final String CARPETA_GENERADA = "/Archivos_Generados/";
     private final String[] formatosGuardado;
-    private final String NOMBRE_PROMT = "Promt";
-    private int promtsGenerados;
+    private final GenerarReportes reportes;
     
     public ControladorDeArchivo(ControladorAnalisis controladorAnalisis) {
         this.controladorAnalisis = controladorAnalisis;
         formatosGuardado = new String[2];
         formatosGuardado[0] = ".md";
         formatosGuardado[1] = ".txt";
-        promtsGenerados = 0;
+        reportes = new GenerarReportes();
     }
     
     public String[] getFormatosGuardado() {
@@ -101,30 +97,9 @@ public class ControladorDeArchivo {
                 throw new ErrorDeArchivoException("Ocurrio un error al leer el archivo: " + e.getMessage());
             }
         }
-        generarArchivoPromt(archivo.getParent(), formato);
-        generarArbolHtml(controladorAnalisis.getPrograma(), archivo.getParent());
+        
+        reportes.generar(controladorAnalisis.getResultadoReporte(), archivo.getParent(), formato);
         return controladorAnalisis.getResultado();
-    }
-    
-    private void generarArchivoPromt(String carpeta, String formato) throws ErrorDeArchivoException {
-        String promt = controladorAnalisis.getResultado().getPromt();
-        promtsGenerados++;
-        String carpetaCompleta = carpeta + CARPETA_GENERADA;
-        String ruta = carpetaCompleta + NOMBRE_PROMT + promtsGenerados + formato;
-        revisarExistenciaCarpeta(carpetaCompleta);
-        try (PrintWriter writer = new PrintWriter(new File(ruta))) {
-            writer.print(promt);
-        } catch (IOException e) {
-            throw new ErrorDeArchivoException("Ocurrio un error al generar el arhivo del promt: " + e.getMessage());
-        }
-    }
-    
-    private void generarArbolHtml(NodoArbol programa, String carpeta) throws ErrorDeArchivoException {
-        String carpetaCompleta = carpeta + CARPETA_GENERADA;
-        VisualizadorAST ast = new VisualizadorAST();
-        String arbol = ast.generarHTML(programa);
-        ReporteArbol reporte = new ReporteArbol();
-        reporte.exportarArbol(carpetaCompleta, arbol);
     }
     
     
@@ -150,13 +125,6 @@ public class ControladorDeArchivo {
                 return formatosGuardado[eleccion];
             default: 
                 throw new ValorInvalidoException("El formato es invalido");
-        }
-    }
-    
-    private void revisarExistenciaCarpeta(String carpeta) {
-        File file = new File(carpeta);
-        if (!file.exists()) {
-            file.mkdirs();
         }
     }
     

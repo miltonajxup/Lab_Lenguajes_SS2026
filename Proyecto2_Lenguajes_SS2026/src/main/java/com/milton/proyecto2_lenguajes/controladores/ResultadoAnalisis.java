@@ -35,14 +35,13 @@ public class ResultadoAnalisis {
         this.erroresLexicos = erroresLexicos;
         
         
-        columnasSimbolos = new String[7];
+        columnasSimbolos = new String[6];
         columnasSimbolos[0] = "Nombre";
         columnasSimbolos[1] = "Tipo de Simbolo";
         columnasSimbolos[2] = "Ambito";
         columnasSimbolos[3] = "Tipo de Token";
         columnasSimbolos[4] = "Fila";
         columnasSimbolos[5] = "Columna";
-        columnasSimbolos[6] = "Valor";
         this.simbolos = simbolos;
     }
 

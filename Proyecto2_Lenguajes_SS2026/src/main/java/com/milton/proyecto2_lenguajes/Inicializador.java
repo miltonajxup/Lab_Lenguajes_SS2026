@@ -6,7 +6,7 @@ package com.milton.proyecto2_lenguajes;
 
 import com.milton.proyecto2_lenguajes.compilador.ControladorAnalisis;
 import com.milton.proyecto2_lenguajes.controladores.ControladorDeArchivo;
-import com.milton.proyecto2_lenguajes.frontend.PromtZal;
+import com.milton.proyecto2_lenguajes.frontend.IDEPromt;
 
 /**
  *
@@ -16,11 +16,11 @@ public class Inicializador {
     
     public void comenzar() {
         
-        ControladorAnalisis recolector = new ControladorAnalisis();
-        ControladorDeArchivo controlador = new ControladorDeArchivo(recolector);
+        ControladorAnalisis controladorAnalisis = new ControladorAnalisis();
+        ControladorDeArchivo controladorArchivo = new ControladorDeArchivo(controladorAnalisis);
         
-        PromtZal ventana = new PromtZal(controlador);
-        ventana.setVisible(true);
+        IDEPromt ide = new IDEPromt(controladorArchivo);
+        ide.setVisible(true);
         
     }
     
