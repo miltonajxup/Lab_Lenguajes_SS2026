@@ -5,6 +5,7 @@
 package com.milton.proyecto2_lenguajes.reportes;
 
 import Archivos.Reporte.Estilos;
+import com.milton.proyecto2_lenguajes.compilador.errores.ErrorSemantico;
 import com.milton.proyecto2_lenguajes.compilador.errores.ErrorSintactico;
 import com.milton.proyecto2_lenguajes.compilador.reglas.Token;
 import com.milton.proyecto2_lenguajes.compilador.simbolos.Simbolo;
@@ -27,6 +28,7 @@ public class ReportesHtml {
     
     public String escribirReporte() {
         List<Simbolo> simbolos = resultados.getSimbolos();
+        List<ErrorSemantico> semanticos = resultados.getErroresSemanticos();
         List<ErrorSintactico> sintacticos = resultados.getErroresSint();
         List<Token> lexicos = resultados.getErrores();
         String reporte = "<head> \n" + estilos.getCSS() + "\n</head> \n<body> \n\t<h1>Reportes De Errores</h1> <br> <br> <br> ";
@@ -57,6 +59,30 @@ public class ReportesHtml {
             }
         } else {
             reporte += "<div class=\"secundario\">No se reconocieron simbolos</div>";
+        }
+        
+        reporte += 
+                """
+                </table>
+                
+                <div class="secundario">
+                    Errores Semanticos
+                </div>
+                <table class="reporte">
+                    <tr>
+                        <th class="azul">Mensaje</th>
+                        <th class="verde">Fila</th>
+                        <th class="azul">Columna</th>
+                    </tr>""";
+        
+        if (!semanticos.isEmpty()) {
+            for (ErrorSemantico error : semanticos) {
+                reporte += "<tr > \n\t <td> " + error.getMensaje() 
+                        + " </td> \n\t <td> " + error.getFila() 
+                        + " </td> \n\t <td> " + error.getColumna() + " </td> \n</tr>";
+            }
+        } else {
+            reporte += "<div class=\"secundario\">No se encontraron Errores de tipo Semanticos</div> ";
         }
         
         reporte += 

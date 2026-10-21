@@ -4,6 +4,7 @@
  */
 package com.milton.proyecto2_lenguajes.resultados;
 
+import com.milton.proyecto2_lenguajes.compilador.errores.ErrorSemantico;
 import com.milton.proyecto2_lenguajes.compilador.errores.ErrorSintactico;
 import com.milton.proyecto2_lenguajes.compilador.reglas.Token;
 import com.milton.proyecto2_lenguajes.compilador.simbolos.Simbolo;
@@ -16,9 +17,16 @@ import java.util.List;
 
 public class OrdenarResultados {
     
-    public String[][] ordenarErroresSintacticos(List<ErrorSintactico> sintacticos) {
-        String[][] errores = new String[sintacticos.size()][3];
+    public String[][] ordenarErroresSintacticos(List<ErrorSemantico> semanticos, List<ErrorSintactico> sintacticos) {
+        String[][] errores = new String[semanticos.size() + sintacticos.size()][3];
         int i = 0;
+        for (ErrorSemantico error : semanticos) {
+            errores[i][0] = error.getMensaje();
+            errores[i][1] = String.valueOf(error.getFila());
+            errores[i][2] = String.valueOf(error.getColumna());
+            i++;
+        }
+        
         for (ErrorSintactico error: sintacticos) {
             errores[i][0] = error.getMensaje();
             errores[i][1] = String.valueOf(error.getFila());

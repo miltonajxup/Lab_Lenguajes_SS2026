@@ -5,6 +5,7 @@
 package com.milton.proyecto2_lenguajes.controladores;
 
 import com.milton.proyecto2_lenguajes.compilador.ast.NodoArbol;
+import com.milton.proyecto2_lenguajes.compilador.errores.ErrorSemantico;
 import com.milton.proyecto2_lenguajes.compilador.errores.ErrorSintactico;
 import com.milton.proyecto2_lenguajes.compilador.reglas.Token;
 import com.milton.proyecto2_lenguajes.compilador.simbolos.Simbolo;
@@ -18,15 +19,17 @@ public class ResultadoReportes {
     
     private final String promt;
     private final NodoArbol programa;
-    private final List<Token> errores;
+    private final List<ErrorSemantico> erroresSemanticos;
     private final List<ErrorSintactico> erroresSint;
+    private final List<Token> errores;
     private final List<Simbolo> simbolos;
 
-    public ResultadoReportes(String promt, NodoArbol programa, List<Token> errores, List<ErrorSintactico> erroresSint, List<Simbolo> simbolos) {
+    public ResultadoReportes(String promt, NodoArbol programa, List<ErrorSemantico> erroresSemanticos, List<ErrorSintactico> erroresSint, List<Token> errores, List<Simbolo> simbolos) {
         this.promt = promt;
         this.programa = programa;
-        this.errores = errores;
+        this.erroresSemanticos = erroresSemanticos;
         this.erroresSint = erroresSint;
+        this.errores = errores;
         this.simbolos = simbolos;
     }
     
@@ -36,6 +39,10 @@ public class ResultadoReportes {
 
     public NodoArbol getPrograma() {
         return programa;
+    }
+
+    public List<ErrorSemantico> getErroresSemanticos() {
+        return erroresSemanticos;
     }
 
     public List<Token> getErrores() {
