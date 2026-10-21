@@ -22,15 +22,15 @@ public class AnalizadorSintactico {
     private final List<Token> tokens;
     private final List<ErrorSintactico> errores;
     private final NodoArbol programa;
-    private final List<Simbolo> simbolos;
+    private final AnalizadorSemantico semantica;
     private Token actual;
     private int indice;
     
-    public AnalizadorSintactico(List<Token> tokens, List<ErrorSintactico> errores, NodoArbol programa, List<Simbolo> simbolos) {
+    public AnalizadorSintactico(List<Token> tokens, List<ErrorSintactico> errores, NodoArbol programa, AnalizadorSemantico sintactica) {
         this.tokens = tokens;
         this.errores = errores;
         this.programa = programa;
-        this.simbolos = simbolos;
+        this.semantica = sintactica;
     }
     
     public void analizar() {
@@ -52,14 +52,14 @@ public class AnalizadorSintactico {
             if (!avanzarRevisandoError(TipoToken.CADENA)) {
                 padrePrincipal.agregarHijo(new NodoArbol(tipo, actual.getLexema()));
             }
-            simbolos.add(new Simbolo(token.getLexema(), TipoSimbolo.CONFIGURACION, Ambito.GLOBAL, tipo, token.getFila(), token.getColumna(), actual.getLexema()));
+            semantica.agregar(new Simbolo(token.getLexema(), TipoSimbolo.CONFIGURACION, Ambito.GLOBAL, tipo, token.getFila(), token.getColumna(), actual.getLexema()));
         } else if (tipo == TipoToken.AGENTE) {
             
             if (avanzarRevisandoError(TipoToken.IDENTIFICADOR)) {
                 return;
             }
             NodoArbol agente = new NodoArbol(tipo, actual.getLexema());
-            simbolos.add(new Simbolo(actual.getLexema(), TipoSimbolo.AGENTE, Ambito.GLOBAL, TipoToken.IDENTIFICADOR, actual.getFila(), actual.getColumna()));
+            semantica.agregar(new Simbolo(actual.getLexema(), TipoSimbolo.AGENTE, Ambito.GLOBAL, TipoToken.IDENTIFICADOR, actual.getFila(), actual.getColumna()));
             
             if (avanzarRevisandoError(TipoToken.LLAVE_IZQ)) {
                 return;
@@ -73,11 +73,28 @@ public class AnalizadorSintactico {
             padrePrincipal.agregarHijo(agente);
         } else if (tipo == TipoToken.EJECUTAR) {
             
-            if (avanzarRevisandoError(TipoToken.IDENTIFICADOR)) {
+            NodoArbol ejecutar = new NodoArbol(TipoToken.EJECUTAR, null);
+            padrePrincipal.agregarHijo(ejecutar);
+            
+            NodoArbol id = getIdentificador();
+            if (id == null) {
                 return;
             }
-            NodoArbol ejecutar = new NodoArbol(TipoToken.EJECUTAR, actual.getLexema());
-            padrePrincipal.agregarHijo(ejecutar);
+            ejecutar.agregarHijo(id);
+            semantica.revisarEjecucionAgente(actual);
+            
+            avanzar();
+            while (actual.getTipo() == TipoToken.COMA && !esFinal()) {
+                NodoArbol idExtra = getIdentificador();
+                if (idExtra != null) {
+                    ejecutar.agregarHijo(idExtra);
+                    semantica.revisarEjecucionAgente(actual);
+                } else {
+                    return;
+                }
+                avanzar();
+            }
+            return;
             
         } else if (tipo == TipoToken.EXPORTAR) {
             
@@ -89,17 +106,20 @@ public class AnalizadorSintactico {
                 return;
             }
             exportar.agregarHijo(id);
+            semantica.revisarVariables(actual);
             
             avanzar();
             while (actual.getTipo() == TipoToken.COMA && !esFinal()) {
                 NodoArbol idExtra = getIdentificador();
                 if (idExtra != null) {
                     exportar.agregarHijo(idExtra);
+                    semantica.revisarVariables(actual);
                 } else {
                     return;
                 }
                 avanzar();
             }
+            return;
             
         }else {
             modoPanicoGlobal();
@@ -128,7 +148,7 @@ public class AnalizadorSintactico {
             }
             NodoArbol contexto = new NodoArbol(tipo, actual.getLexema());
             agente.agregarHijo(contexto);
-            simbolos.add(new Simbolo("contexto", TipoSimbolo.CONFIGURACION, Ambito.AGENTE, tipo, actual.getFila(), actual.getColumna(), actual.getLexema()));
+            semantica.agregar(new Simbolo("contexto", TipoSimbolo.CONFIGURACION, Ambito.AGENTE, tipo, actual.getFila(), actual.getColumna(), actual.getLexema()));
             
         } else if (tipo == TipoToken.VARIABLE) {
             
@@ -136,7 +156,7 @@ public class AnalizadorSintactico {
                 return;
             }
             NodoArbol variable = new NodoArbol(tipo, actual.getLexema());
-            simbolos.add(new Simbolo(actual.getLexema(), TipoSimbolo.VARIABLE, Ambito.AGENTE, tipo, actual.getFila(), actual.getColumna()));
+            semantica.agregar(new Simbolo(actual.getLexema(), TipoSimbolo.VARIABLE, Ambito.AGENTE, tipo, actual.getFila(), actual.getColumna()));
             
             if (avanzarRevisandoError(TipoToken.ASIGNACION)) {
                 return;
@@ -166,7 +186,7 @@ public class AnalizadorSintactico {
             preguntar.agregarHijo(sobre);
             
             agregarNodoAsinar(preguntar);
-            simbolos.add(new Simbolo(actual.getLexema(), TipoSimbolo.ASIGNAR, Ambito.AGENTE, tipo, actual.getFila(), actual.getColumna()));
+            semantica.agregar(new Simbolo(actual.getLexema(), TipoSimbolo.ASIGNAR, Ambito.AGENTE, tipo, actual.getFila(), actual.getColumna()));
             
         } else if (tipo == TipoToken.GENERAR) {
             
@@ -175,7 +195,6 @@ public class AnalizadorSintactico {
             }
             NodoArbol generar = new NodoArbol(TipoToken.GENERAR, actual.getLexema());
             agente.agregarHijo(generar);
-            simbolos.add(new Simbolo(actual.getLexema(), TipoSimbolo.VARIABLE, Ambito.AGENTE, tipo, actual.getFila(), actual.getColumna()));
             
             if (avanzarRevisandoError(TipoToken.DESDE)) {
                 return;
@@ -213,7 +232,7 @@ public class AnalizadorSintactico {
             resumir.agregarHijo(id);
             
             agregarNodoAsinar(resumir);
-            simbolos.add(new Simbolo(actual.getLexema(), TipoSimbolo.ASIGNAR, Ambito.AGENTE, tipo, actual.getFila(), actual.getColumna()));
+            semantica.agregar(new Simbolo(actual.getLexema(), TipoSimbolo.ASIGNAR, Ambito.AGENTE, tipo, actual.getFila(), actual.getColumna()));
             
         } else if (tipo == TipoToken.ANALIZAR) {
             
@@ -233,7 +252,7 @@ public class AnalizadorSintactico {
             analizar.agregarHijo(sobre);
             
             agregarNodoAsinar(analizar);
-            simbolos.add(new Simbolo(actual.getLexema(), TipoSimbolo.ASIGNAR, Ambito.AGENTE, tipo, actual.getFila(), actual.getColumna()));
+            semantica.agregar(new Simbolo(actual.getLexema(), TipoSimbolo.ASIGNAR, Ambito.AGENTE, tipo, actual.getFila(), actual.getColumna()));
             
         } else if (tipo == TipoToken.TRADUCIR) {
             
@@ -246,7 +265,7 @@ public class AnalizadorSintactico {
             agregarEnConCadena(traducir);
             
             agregarNodoAsinar(traducir);
-            simbolos.add(new Simbolo(actual.getLexema(), TipoSimbolo.ASIGNAR, Ambito.AGENTE, tipo, actual.getFila(), actual.getColumna()));
+            semantica.agregar(new Simbolo(actual.getLexema(), TipoSimbolo.ASIGNAR, Ambito.AGENTE, tipo, actual.getFila(), actual.getColumna()));
             
         } else if (tipo == TipoToken.CLASIFICAR) {
             
@@ -259,7 +278,7 @@ public class AnalizadorSintactico {
             agregarEnConCadena(clasificar);
             
             agregarNodoAsinar(clasificar);
-            simbolos.add(new Simbolo(actual.getLexema(), TipoSimbolo.ASIGNAR, Ambito.AGENTE, tipo, actual.getFila(), actual.getColumna()));
+            semantica.agregar(new Simbolo(actual.getLexema(), TipoSimbolo.ASIGNAR, Ambito.AGENTE, tipo, actual.getFila(), actual.getColumna()));
             
         } else if (tipo == TipoToken.EXTRAER) {
             
@@ -279,7 +298,7 @@ public class AnalizadorSintactico {
             extraer.agregarHijo(desde);
             
             agregarNodoAsinar(extraer);
-            simbolos.add(new Simbolo(actual.getLexema(), TipoSimbolo.ASIGNAR, Ambito.AGENTE, tipo, actual.getFila(), actual.getColumna()));
+            semantica.agregar(new Simbolo(actual.getLexema(), TipoSimbolo.ASIGNAR, Ambito.AGENTE, tipo, actual.getFila(), actual.getColumna()));
             
         } else {
             modoPanicoAgente();
@@ -344,7 +363,7 @@ public class AnalizadorSintactico {
             
             agregarNodoAsinar(generar);
         }
-        simbolos.add(new Simbolo(actual.getLexema(), TipoSimbolo.ASIGNAR, Ambito.AGENTE, tipo, actual.getFila(), actual.getColumna()));
+        semantica.agregar(new Simbolo(actual.getLexema(), TipoSimbolo.ASIGNAR, Ambito.AGENTE, tipo, actual.getFila(), actual.getColumna()));
     }
     
     private void agregarNodoAsinar(NodoArbol nodo) {
