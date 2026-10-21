@@ -49,19 +49,19 @@ public class AnalizadorSintactico {
         if (tipo == TipoToken.MODELO || tipo == TipoToken.ROL | tipo == TipoToken.FORMATO) {
             
             Token token = actual;
-            if (!avanzarRevisandoError(TipoToken.CADENA, TipoToken.CADENA)) {
+            if (!avanzarRevisandoError(TipoToken.CADENA)) {
                 padrePrincipal.agregarHijo(new NodoArbol(tipo, actual.getLexema()));
             }
             simbolos.add(new Simbolo(token.getLexema(), TipoSimbolo.CONFIGURACION, Ambito.GLOBAL, tipo, token.getFila(), token.getColumna(), actual.getLexema()));
         } else if (tipo == TipoToken.AGENTE) {
             
-            if (avanzarRevisandoError(TipoToken.IDENTIFICADOR, TipoToken.IDENTIFICADOR)) {
+            if (avanzarRevisandoError(TipoToken.IDENTIFICADOR)) {
                 return;
             }
             NodoArbol agente = new NodoArbol(tipo, actual.getLexema());
             simbolos.add(new Simbolo(actual.getLexema(), TipoSimbolo.AGENTE, Ambito.GLOBAL, TipoToken.IDENTIFICADOR, actual.getFila(), actual.getColumna()));
             
-            if (avanzarRevisandoError(TipoToken.LLAVE_IZQ, TipoToken.LLAVE_DER)) {
+            if (avanzarRevisandoError(TipoToken.LLAVE_IZQ)) {
                 return;
             }
             avanzar();
@@ -73,7 +73,7 @@ public class AnalizadorSintactico {
             padrePrincipal.agregarHijo(agente);
         } else if (tipo == TipoToken.EJECUTAR) {
             
-            if (avanzarRevisandoError(TipoToken.IDENTIFICADOR, TipoToken.IDENTIFICADOR)) {
+            if (avanzarRevisandoError(TipoToken.IDENTIFICADOR)) {
                 return;
             }
             NodoArbol ejecutar = new NodoArbol(TipoToken.EJECUTAR, actual.getLexema());
@@ -102,13 +102,14 @@ public class AnalizadorSintactico {
             }
             
         }else {
-            errores.add(new ErrorSintactico("No se puede reconocer: '" + tokens.get(indice).getLexema() + "'", actual.getFila(), actual.getColumna()));
+            modoPanicoGlobal();
+            return;
         }
         avanzar();
     }
     
     private NodoArbol getIdentificador() {
-        if (!avanzarRevisandoError(TipoToken.IDENTIFICADOR, TipoToken.IDENTIFICADOR)) {
+        if (!avanzarRevisandoError(TipoToken.IDENTIFICADOR)) {
             return new NodoArbol(TipoToken.IDENTIFICADOR, actual.getLexema());
         }
         return null;
@@ -119,10 +120,10 @@ public class AnalizadorSintactico {
         
         if (tipo == TipoToken.CONTEXTO) {
             
-            if (avanzarRevisandoError(TipoToken.ASIGNACION, TipoToken.CADENA)) {
+            if (avanzarRevisandoError(TipoToken.ASIGNACION)) {
                 return;
             }
-            if (avanzarRevisandoError(TipoToken.CADENA, TipoToken.CADENA)) {
+            if (avanzarRevisandoError(TipoToken.CADENA)) {
                 return;
             }
             NodoArbol contexto = new NodoArbol(tipo, actual.getLexema());
@@ -131,13 +132,13 @@ public class AnalizadorSintactico {
             
         } else if (tipo == TipoToken.VARIABLE) {
             
-            if (avanzarRevisandoError(TipoToken.IDENTIFICADOR, TipoToken.IDENTIFICADOR)) {
+            if (avanzarRevisandoError(TipoToken.IDENTIFICADOR)) {
                 return;
             }
             NodoArbol variable = new NodoArbol(tipo, actual.getLexema());
             simbolos.add(new Simbolo(actual.getLexema(), TipoSimbolo.VARIABLE, Ambito.AGENTE, tipo, actual.getFila(), actual.getColumna()));
             
-            if (avanzarRevisandoError(TipoToken.ASIGNACION, TipoToken.ASIGNACION)) {
+            if (avanzarRevisandoError(TipoToken.ASIGNACION)) {
                 return;
             }
             avanzar();
@@ -147,17 +148,17 @@ public class AnalizadorSintactico {
             agente.agregarHijo(variable);
             
         } else if (tipo == TipoToken.PREGUNTAR) {
-            if (avanzarRevisandoError(TipoToken.CADENA, TipoToken.IDENTIFICADOR)) {
+            if (avanzarRevisandoError(TipoToken.CADENA)) {
                 return;
             }
             
             NodoArbol preguntar = new NodoArbol(TipoToken.PREGUNTAR, actual.getLexema());
             agente.agregarHijo(preguntar);
             
-            if (avanzarRevisandoError(TipoToken.SOBRE, TipoToken.IDENTIFICADOR)) {
+            if (avanzarRevisandoError(TipoToken.SOBRE)) {
                 return;
             }
-            if (avanzarRevisandoError(TipoToken.IDENTIFICADOR, TipoToken.IDENTIFICADOR)) {
+            if (avanzarRevisandoError(TipoToken.IDENTIFICADOR)) {
                 return;
             }
             
@@ -169,17 +170,17 @@ public class AnalizadorSintactico {
             
         } else if (tipo == TipoToken.GENERAR) {
             
-            if (avanzarRevisandoError(TipoToken.IDENTIFICADOR, TipoToken.IDENTIFICADOR)) {
+            if (avanzarRevisandoError(TipoToken.IDENTIFICADOR)) {
                 return;
             }
             NodoArbol generar = new NodoArbol(TipoToken.GENERAR, actual.getLexema());
             agente.agregarHijo(generar);
             simbolos.add(new Simbolo(actual.getLexema(), TipoSimbolo.VARIABLE, Ambito.AGENTE, tipo, actual.getFila(), actual.getColumna()));
             
-            if (avanzarRevisandoError(TipoToken.DESDE, TipoToken.IDENTIFICADOR)) {
+            if (avanzarRevisandoError(TipoToken.DESDE)) {
                 return;
             }
-            if (avanzarRevisandoError(TipoToken.CADENA, TipoToken.IDENTIFICADOR)) {
+            if (avanzarRevisandoError(TipoToken.CADENA)) {
                 return;
             }
             
@@ -188,22 +189,22 @@ public class AnalizadorSintactico {
             
         } else if (tipo == TipoToken.RESUMIR) {
             
-            if (avanzarRevisandoError(TipoToken.IDENTIFICADOR, TipoToken.IDENTIFICADOR)) {
+            if (avanzarRevisandoError(TipoToken.IDENTIFICADOR)) {
                 return;
             }
             
             NodoArbol resumir = new NodoArbol(TipoToken.RESUMIR, actual.getLexema());
             agente.agregarHijo(resumir);
             
-            if (avanzarRevisandoError(TipoToken.EN, TipoToken.IDENTIFICADOR)) {
+            if (avanzarRevisandoError(TipoToken.EN)) {
                 return;
             }
             NodoArbol conector = new NodoArbol(TipoToken.EN, actual.getLexema());
-            if (avanzarRevisandoError(TipoToken.ENTERO, TipoToken.IDENTIFICADOR)) {
+            if (avanzarRevisandoError(TipoToken.ENTERO)) {
                 return;
             }
             NodoArbol entero = new NodoArbol(TipoToken.ENTERO, actual.getLexema());
-            if (avanzarRevisandoError(TipoToken.IDENTIFICADOR, TipoToken.IDENTIFICADOR)) {
+            if (avanzarRevisandoError(TipoToken.IDENTIFICADOR)) {
                 return;
             }
             NodoArbol id = new NodoArbol(TipoToken.IDENTIFICADOR, actual.getLexema());
@@ -216,16 +217,16 @@ public class AnalizadorSintactico {
             
         } else if (tipo == TipoToken.ANALIZAR) {
             
-            if (avanzarRevisandoError(TipoToken.IDENTIFICADOR, TipoToken.IDENTIFICADOR)) {
+            if (avanzarRevisandoError(TipoToken.IDENTIFICADOR)) {
                 return;
             }
             NodoArbol analizar = new NodoArbol(TipoToken.ANALIZAR, actual.getLexema());
             agente.agregarHijo(analizar);
             
-            if (avanzarRevisandoError(TipoToken.SOBRE, TipoToken.IDENTIFICADOR)) {
+            if (avanzarRevisandoError(TipoToken.SOBRE)) {
                 return;
             }
-            if (avanzarRevisandoError(TipoToken.CADENA, TipoToken.IDENTIFICADOR)) {
+            if (avanzarRevisandoError(TipoToken.CADENA)) {
                 return;
             }
             NodoArbol sobre = new NodoArbol(TipoToken.SOBRE, actual.getLexema());
@@ -236,7 +237,7 @@ public class AnalizadorSintactico {
             
         } else if (tipo == TipoToken.TRADUCIR) {
             
-            if (avanzarRevisandoError(TipoToken.IDENTIFICADOR, TipoToken.IDENTIFICADOR)) {
+            if (avanzarRevisandoError(TipoToken.IDENTIFICADOR)) {
                 return;
             }
             NodoArbol traducir = new NodoArbol(TipoToken.TRADUCIR, actual.getLexema());
@@ -249,7 +250,7 @@ public class AnalizadorSintactico {
             
         } else if (tipo == TipoToken.CLASIFICAR) {
             
-            if (avanzarRevisandoError(TipoToken.IDENTIFICADOR, TipoToken.IDENTIFICADOR)) {
+            if (avanzarRevisandoError(TipoToken.IDENTIFICADOR)) {
                 return;
             }
             NodoArbol clasificar = new NodoArbol(TipoToken.CLASIFICAR, actual.getLexema());
@@ -262,16 +263,16 @@ public class AnalizadorSintactico {
             
         } else if (tipo == TipoToken.EXTRAER) {
             
-            if (avanzarRevisandoError(TipoToken.IDENTIFICADOR, TipoToken.IDENTIFICADOR)) {
+            if (avanzarRevisandoError(TipoToken.IDENTIFICADOR)) {
                 return;
             }
             NodoArbol extraer = new NodoArbol(TipoToken.EXTRAER, actual.getLexema());
             agente.agregarHijo(extraer);
             
-            if (avanzarRevisandoError(TipoToken.DESDE, TipoToken.IDENTIFICADOR)) {
+            if (avanzarRevisandoError(TipoToken.DESDE)) {
                 return;
             }
-            if (avanzarRevisandoError(TipoToken.CADENA, TipoToken.IDENTIFICADOR)) {
+            if (avanzarRevisandoError(TipoToken.CADENA)) {
                 return;
             }
             NodoArbol desde = new NodoArbol(TipoToken.DESDE, actual.getLexema());
@@ -281,10 +282,8 @@ public class AnalizadorSintactico {
             simbolos.add(new Simbolo(actual.getLexema(), TipoSimbolo.ASIGNAR, Ambito.AGENTE, tipo, actual.getFila(), actual.getColumna()));
             
         } else {
-            errores.add(new ErrorSintactico(
-                    "No se puede comenzar una secuencia con " + actual.getTipo() + "(" + tokens.get(indice).getLexema() + ") dentro de un " + TipoToken.AGENTE, 
-                    actual.getFila(), 
-                    actual.getColumna()));
+            modoPanicoAgente();
+            return;
         }
         avanzar();
     }
@@ -293,16 +292,16 @@ public class AnalizadorSintactico {
         TipoToken tipo = actual.getTipo();
         if (tipo == TipoToken.CARGAR) {
             
-            if (avanzarRevisandoError(TipoToken.PARENTESIS_IZQ, TipoToken.PARENTESIS_DER)) {
+            if (avanzarRevisandoError(TipoToken.PARENTESIS_IZQ)) {
                 return;
             }
-            if (avanzarRevisandoError(TipoToken.CADENA, TipoToken.PARENTESIS_DER)) {
+            if (avanzarRevisandoError(TipoToken.CADENA)) {
                 return;
             }
             
             NodoArbol cargar = new NodoArbol(TipoToken.CARGAR, actual.getLexema());
             
-            if (avanzarRevisandoError(TipoToken.PARENTESIS_DER, TipoToken.PARENTESIS_DER)) {
+            if (avanzarRevisandoError(TipoToken.PARENTESIS_DER)) {
                 return;
             }
             variable.agregarHijo(cargar);
@@ -336,7 +335,7 @@ public class AnalizadorSintactico {
             NodoArbol concatenacion = new NodoArbol(TipoToken.CONCATENACION, actual.getLexema());
             desde.agregarHijo(concatenacion);
             
-            if (avanzarRevisandoError(TipoToken.IDENTIFICADOR, TipoToken.IDENTIFICADOR)) {
+            if (avanzarRevisandoError(TipoToken.IDENTIFICADOR)) {
                 return;
             }
             
@@ -349,10 +348,10 @@ public class AnalizadorSintactico {
     }
     
     private void agregarNodoAsinar(NodoArbol nodo) {
-        if (avanzarRevisandoError(TipoToken.ASIGNAR, TipoToken.IDENTIFICADOR)) {
+        if (avanzarRevisandoError(TipoToken.ASIGNAR)) {
             return;
         }
-        if (avanzarRevisandoError(TipoToken.IDENTIFICADOR, TipoToken.IDENTIFICADOR)) {
+        if (avanzarRevisandoError(TipoToken.IDENTIFICADOR)) {
             return;
         }
 
@@ -361,10 +360,10 @@ public class AnalizadorSintactico {
     }
     
     private void agregarEnConCadena(NodoArbol nodo) {
-        if (avanzarRevisandoError(TipoToken.EN, TipoToken.IDENTIFICADOR)) {
+        if (avanzarRevisandoError(TipoToken.EN)) {
             return;
         }
-        if (avanzarRevisandoError(TipoToken.CADENA, TipoToken.IDENTIFICADOR)) {
+        if (avanzarRevisandoError(TipoToken.CADENA)) {
             return;
         }
         NodoArbol conector = new NodoArbol(TipoToken.EN, actual.getLexema());
@@ -384,19 +383,55 @@ public class AnalizadorSintactico {
         }
     }
     
-    private boolean avanzarRevisandoError(TipoToken tokenEsperado, TipoToken tokenDeCierrre) {
+    private boolean avanzarRevisandoError(TipoToken tokenEsperado) {
         avanzar();
         if (actual.getTipo() != tokenEsperado) {
-            while (actual.getTipo() != tokenDeCierrre && !esFinal()) {
-                errores.add(new ErrorSintactico(
-                        "Error sintactico: Se espera '" + tokenEsperado + "' pero encuentra '" + actual.getTipo() + "'", 
-                        actual.getFila(), 
-                        actual.getColumna()));
+            Token tokenError = actual;
+            while (!esTokenSincronizacion(actual.getTipo()) && !esFinal()) {
                 avanzar();
             }
+            errores.add(new ErrorSintactico(
+                    "Error sintactico: Se espera '" + tokenEsperado + "' pero encuentra '" + tokenError.getTipo() + "'", 
+                    tokenError.getFila(), 
+                    tokenError.getColumna()));
             return true;
         }
         return false;
+    }
+    
+    private boolean esTokenSincronizacion(TipoToken tipo) {
+        return tipo == TipoToken.AGENTE || tipo == TipoToken.LLAVE_DER || tipo == TipoToken.VARIABLE || tipo == TipoToken.PREGUNTAR 
+                || tipo == TipoToken.GENERAR || tipo == TipoToken.RESUMIR || tipo == TipoToken.ANALIZAR || tipo == TipoToken.TRADUCIR 
+                || tipo == TipoToken.CLASIFICAR || tipo == TipoToken.EXTRAER || tipo == TipoToken.EJECUTAR || tipo == TipoToken.EXPORTAR;
+    }
+    
+    private void modoPanicoGlobal() {
+        Token token = actual;
+        while (!esSincronizacionGlobal(actual.getTipo()) && !esFinal()) {
+            avanzar();
+        }
+        errores.add(new ErrorSintactico(
+                "Error sintactico: '" + token.getLexema() + "' es un: '" + token.getTipo() + "' y no es un valor que se espera en el espacio " + Ambito.GLOBAL, 
+                token.getFila(), 
+                token.getColumna()));
+    }
+    
+    private void modoPanicoAgente() {
+        Token error = actual;
+        avanzar();
+        while (!esTokenSincronizacion(actual.getTipo()) && !esFinal()) {
+            avanzar();
+        }
+        errores.add(new ErrorSintactico(
+                "Error sintactico: '" + error.getLexema() + "' es un: '" + error.getTipo() + "' y no es un valor que se espera en el espacio " + Ambito.AGENTE, 
+                error.getFila(), 
+                error.getColumna()));
+    }
+    
+    private boolean esSincronizacionGlobal(TipoToken tipo) {
+        return tipo == TipoToken.MODELO || tipo == TipoToken.ROL || tipo == TipoToken.FORMATO || tipo == TipoToken.AGENTE 
+                || tipo == TipoToken.EXPORTAR || tipo == TipoToken.EJECUTAR;
+        
     }
     
 }

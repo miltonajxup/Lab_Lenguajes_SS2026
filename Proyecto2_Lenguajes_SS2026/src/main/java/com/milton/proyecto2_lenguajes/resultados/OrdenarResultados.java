@@ -33,9 +33,9 @@ public class OrdenarResultados {
         int i = 0;
         for (Token error : lexicos) {
             errores[i][0] = error.getDescripcion();
-            errores[i][2] = error.getLexema();
-            errores[i][3] = String.valueOf(error.getFila());
-            errores[i][4] = String.valueOf(error.getColumna());
+            errores[i][1] = error.getLexema();
+            errores[i][2] = String.valueOf(error.getFila());
+            errores[i][3] = String.valueOf(error.getColumna());
             i++;
         }
         return errores;

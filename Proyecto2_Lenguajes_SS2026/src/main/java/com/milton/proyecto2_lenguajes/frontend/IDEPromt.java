@@ -10,11 +10,9 @@ import com.milton.proyecto2_lenguajes.controladores.ResultadoAnalisis;
 import com.milton.proyecto2_lenguajes.exceptions.ErrorDeArchivoException;
 import java.awt.Font;
 import java.io.File;
-import javax.swing.BorderFactory;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -36,7 +34,7 @@ public class IDEPromt extends javax.swing.JFrame {
         fileChooser = new JFileChooser();
         
         promtGenerado = new PanelEscritor(this, controlador, "Promtzal Generado");
-        erroresSintacticos = new PanelEscritor(this, controlador, "Errores Sintacticos");
+        erroresSintacticos = new PanelEscritor(this, controlador, "Errores");
         tablaSimbolos =  new PanelEscritor(this, controlador, "Tabla de Simbolos");
         espacio.setFont(new Font("Liberation Sans", 0, 18));
     }
@@ -170,12 +168,8 @@ public class IDEPromt extends javax.swing.JFrame {
         DefaultTableModel modelo1 = new DefaultTableModel(resultados.getErroresSintacticos(), resultados.getColumnasErrSint());
         JTable tabla1 = new JTable(modelo1);
         tabla1.setFont(new Font("Liberation Sans", 0, 20));
-
-        DefaultTableCellRenderer renderizador = new DefaultTableCellRenderer();
-        renderizador.setBorder(
-                BorderFactory.createEmptyBorder(5, 10, 5, 10)
-        );
-        tabla1.setDefaultRenderer(Object.class, renderizador);
+        tabla1.setRowHeight(35);
+        
         tabla1.getTableHeader().setFont(
             new Font("Liberation Sans", Font.BOLD, 20)
         );
@@ -186,12 +180,8 @@ public class IDEPromt extends javax.swing.JFrame {
         DefaultTableModel modelo2 = new DefaultTableModel(resultados.getErroresLexicos(), resultados.getColumnasErrLexicos());
         JTable tabla2 = new JTable(modelo2);
         tabla2.setFont(new Font("Liberation Sans", 0, 20));
+        tabla2.setRowHeight(35);
         
-        DefaultTableCellRenderer renderizador2 = new DefaultTableCellRenderer();
-        renderizador2.setBorder(
-                BorderFactory.createEmptyBorder(5, 10, 5, 10)
-        );
-        tabla2.setDefaultRenderer(Object.class, renderizador2);
         tabla2.getTableHeader().setFont(
             new Font("Liberation Sans", Font.BOLD, 20)
         );
@@ -202,12 +192,8 @@ public class IDEPromt extends javax.swing.JFrame {
         DefaultTableModel modelo3 = new DefaultTableModel(resultados.getSimbolos(), resultados.getColumnasSimbolos());
         JTable tabla3 = new JTable(modelo3);
         tabla3.setFont(new Font("Liberation Sans", 0, 20));
+        tabla3.setRowHeight(35);
         
-        DefaultTableCellRenderer renderizador3 = new DefaultTableCellRenderer();
-        renderizador3.setBorder(
-                BorderFactory.createEmptyBorder(5, 10, 5, 10)
-        );
-        tabla3.setDefaultRenderer(Object.class, renderizador3);
         tabla3.getTableHeader().setFont(
             new Font("Liberation Sans", Font.BOLD, 20)
         );
