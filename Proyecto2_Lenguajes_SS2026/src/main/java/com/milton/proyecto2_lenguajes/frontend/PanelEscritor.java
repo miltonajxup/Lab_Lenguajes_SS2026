@@ -13,6 +13,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 
 /**
  *
@@ -49,6 +50,7 @@ public class PanelEscritor extends javax.swing.JPanel {
                 }
             }
         });
+        this.remove(espacioTabla2);
     }
     
     public PanelEscritor(IDEPromt ide, ControladorDeArchivo controlador, String nombre) {
@@ -63,6 +65,7 @@ public class PanelEscritor extends javax.swing.JPanel {
         entorno.setEditable(false);
         btnGuardar.setVisible(false);
         btnCompilar.setVisible(false);
+        this.remove(espacioTabla2);
     }
     
     public void setTexto(String texto) {
@@ -85,6 +88,8 @@ public class PanelEscritor extends javax.swing.JPanel {
         jButton1 = new javax.swing.JButton();
         btnGuardar = new javax.swing.JButton();
         btnCompilar = new javax.swing.JButton();
+        espacioTabla1 = new javax.swing.JScrollPane();
+        espacioTabla2 = new javax.swing.JScrollPane();
 
         entorno.setColumns(20);
         entorno.setRows(5);
@@ -104,6 +109,10 @@ public class PanelEscritor extends javax.swing.JPanel {
         btnCompilar.setText("Compilar");
         btnCompilar.addActionListener(this::btnCompilarActionPerformed);
 
+        espacioTabla1.setMaximumSize(new java.awt.Dimension(32767, 150));
+
+        espacioTabla2.setMaximumSize(new java.awt.Dimension(32767, 150));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -111,17 +120,20 @@ public class PanelEscritor extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(espacioTabla2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(espacioTabla1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 907, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(btnCompilar)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnGuardar)
-                        .addGap(18, 18, 18)
-                        .addComponent(jButton1)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 913, Short.MAX_VALUE)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(btnCompilar)
+                                .addGap(18, 18, 18)
+                                .addComponent(btnGuardar)
+                                .addGap(18, 18, 18)
+                                .addComponent(jButton1)))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -134,8 +146,13 @@ public class PanelEscritor extends javax.swing.JPanel {
                     .addComponent(btnCompilar))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 468, Short.MAX_VALUE)
-                    .addComponent(jScrollPane3)))
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 443, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(espacioTabla1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(espacioTabla2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -168,11 +185,24 @@ public class PanelEscritor extends javax.swing.JPanel {
     private javax.swing.JButton btnCompilar;
     private javax.swing.JButton btnGuardar;
     private javax.swing.JTextArea entorno;
+    private javax.swing.JScrollPane espacioTabla1;
+    private javax.swing.JScrollPane espacioTabla2;
     private javax.swing.JTextArea filas;
     private javax.swing.JButton jButton1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     // End of variables declaration//GEN-END:variables
+    
+    public void agregarTabla(JTable tabla) {
+        espacioTabla1.setViewportView(tabla);
+        jScrollPane2.setVisible(false);
+        jScrollPane3.setVisible(false);
+    }
+    
+    public void agregarTabla2(JTable tabla) {
+        this.add(espacioTabla2);
+        espacioTabla2.setViewportView(tabla);
+    }
     
     public void mostrarMensaje(String mensaje) {
         JOptionPane.showMessageDialog(null, mensaje);

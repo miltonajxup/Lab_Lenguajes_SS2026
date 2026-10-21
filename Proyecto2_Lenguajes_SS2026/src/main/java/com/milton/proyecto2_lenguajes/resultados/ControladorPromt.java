@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.milton.proyecto2_lenguajes.promt;
+package com.milton.proyecto2_lenguajes.resultados;
 
 import com.milton.proyecto2_lenguajes.compilador.ast.NodoArbol;
 import com.milton.proyecto2_lenguajes.compilador.reglas.TipoToken;
@@ -17,7 +17,6 @@ public class ControladorPromt {
     
     public ControladorPromt() {
         promt = "";
-        
     }
     
     public String getPromt() {

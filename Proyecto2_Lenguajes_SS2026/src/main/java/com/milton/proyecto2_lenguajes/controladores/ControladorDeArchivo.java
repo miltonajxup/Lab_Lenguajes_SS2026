@@ -5,8 +5,11 @@
 package com.milton.proyecto2_lenguajes.controladores;
 
 import com.milton.proyecto2_lenguajes.compilador.ControladorAnalisis;
+import com.milton.proyecto2_lenguajes.compilador.ast.NodoArbol;
 import com.milton.proyecto2_lenguajes.exceptions.ErrorDeArchivoException;
 import com.milton.proyecto2_lenguajes.exceptions.ValorInvalidoException;
+import com.milton.proyecto2_lenguajes.reportes.ReporteArbol;
+import com.milton.proyecto2_lenguajes.resultados.VisualizadorAST;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -99,6 +102,7 @@ public class ControladorDeArchivo {
             }
         }
         generarArchivoPromt(archivo.getParent(), formato);
+        generarArbolHtml(controladorAnalisis.getPrograma(), archivo.getParent());
         return controladorAnalisis.getResultado();
     }
     
@@ -114,6 +118,16 @@ public class ControladorDeArchivo {
             throw new ErrorDeArchivoException("Ocurrio un error al generar el arhivo del promt: " + e.getMessage());
         }
     }
+    
+    private void generarArbolHtml(NodoArbol programa, String carpeta) throws ErrorDeArchivoException {
+        String carpetaCompleta = carpeta + CARPETA_GENERADA;
+        VisualizadorAST ast = new VisualizadorAST();
+        String arbol = ast.generarHTML(programa);
+        ReporteArbol reporte = new ReporteArbol();
+        reporte.exportarArbol(carpetaCompleta, arbol);
+    }
+    
+    
     
     private RespuestaArchivo verificarExtension(String rutaArchivo) {
         int finLinea = rutaArchivo.length();

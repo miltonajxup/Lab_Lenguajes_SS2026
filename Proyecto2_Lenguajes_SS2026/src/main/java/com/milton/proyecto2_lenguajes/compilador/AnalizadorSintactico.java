@@ -11,7 +11,6 @@ import com.milton.proyecto2_lenguajes.compilador.reglas.TipoSimbolo;
 import com.milton.proyecto2_lenguajes.compilador.reglas.TipoToken;
 import com.milton.proyecto2_lenguajes.compilador.reglas.Token;
 import com.milton.proyecto2_lenguajes.compilador.simbolos.Simbolo;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,18 +26,17 @@ public class AnalizadorSintactico {
     private Token actual;
     private int indice;
     
-    public AnalizadorSintactico(List<Token> tokens, NodoArbol programa,List<Simbolo> simbolos) {
+    public AnalizadorSintactico(List<Token> tokens, List<ErrorSintactico> errores, NodoArbol programa, List<Simbolo> simbolos) {
         this.tokens = tokens;
+        this.errores = errores;
         this.programa = programa;
         this.simbolos = simbolos;
-        errores = new ArrayList<>();
-    }
-    
-    public List<ErrorSintactico> getErrores() {
-        return errores;
     }
     
     public void analizar() {
+        if (tokens.isEmpty()) {
+            return;
+        }
         indice = 0;
         actual = tokens.get(indice);
         while (!esFinal()) {

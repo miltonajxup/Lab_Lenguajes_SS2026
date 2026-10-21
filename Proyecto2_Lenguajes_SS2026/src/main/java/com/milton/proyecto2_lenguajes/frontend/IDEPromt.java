@@ -10,8 +10,12 @@ import com.milton.proyecto2_lenguajes.controladores.ResultadoAnalisis;
 import com.milton.proyecto2_lenguajes.exceptions.ErrorDeArchivoException;
 import java.awt.Font;
 import java.io.File;
+import javax.swing.BorderFactory;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -23,7 +27,7 @@ public class IDEPromt extends javax.swing.JFrame {
     private final JFileChooser fileChooser;
     private final PanelEscritor promtGenerado;
     private final PanelEscritor erroresSintacticos;
-    private final PanelEscritor arbol;
+    private final PanelEscritor tablaSimbolos;
     
     public IDEPromt(ControladorDeArchivo controlador) {
         initComponents();
@@ -33,7 +37,7 @@ public class IDEPromt extends javax.swing.JFrame {
         
         promtGenerado = new PanelEscritor(this, controlador, "Promtzal Generado");
         erroresSintacticos = new PanelEscritor(this, controlador, "Errores Sintacticos");
-        arbol = new PanelEscritor(this, controlador, "Arbol");
+        tablaSimbolos =  new PanelEscritor(this, controlador, "Tabla de Simbolos");
         espacio.setFont(new Font("Liberation Sans", 0, 18));
     }
 
@@ -48,8 +52,9 @@ public class IDEPromt extends javax.swing.JFrame {
 
         jDesktopPane1 = new javax.swing.JDesktopPane();
         btnAbrirArchivo = new javax.swing.JButton();
-        espacio = new javax.swing.JTabbedPane();
         jButton1 = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        espacio = new javax.swing.JTabbedPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setPreferredSize(new java.awt.Dimension(1500, 800));
@@ -60,34 +65,36 @@ public class IDEPromt extends javax.swing.JFrame {
         jButton1.setText("Nuevo");
         jButton1.addActionListener(this::jButton1ActionPerformed);
 
+        jScrollPane1.setViewportView(espacio);
+
         jDesktopPane1.setLayer(btnAbrirArchivo, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        jDesktopPane1.setLayer(espacio, javax.swing.JLayeredPane.DEFAULT_LAYER);
         jDesktopPane1.setLayer(jButton1, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jDesktopPane1.setLayer(jScrollPane1, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout jDesktopPane1Layout = new javax.swing.GroupLayout(jDesktopPane1);
         jDesktopPane1.setLayout(jDesktopPane1Layout);
         jDesktopPane1Layout.setHorizontalGroup(
             jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jDesktopPane1Layout.createSequentialGroup()
-                .addGap(55, 55, 55)
+                .addGap(61, 61, 61)
                 .addGroup(jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(espacio, javax.swing.GroupLayout.PREFERRED_SIZE, 1400, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1400, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jDesktopPane1Layout.createSequentialGroup()
                         .addComponent(btnAbrirArchivo)
                         .addGap(18, 18, 18)
                         .addComponent(jButton1)))
-                .addContainerGap(66, Short.MAX_VALUE))
+                .addContainerGap(60, Short.MAX_VALUE))
         );
         jDesktopPane1Layout.setVerticalGroup(
             jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jDesktopPane1Layout.createSequentialGroup()
-                .addGap(29, 29, 29)
+                .addGap(30, 30, 30)
                 .addGroup(jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnAbrirArchivo)
                     .addComponent(jButton1))
                 .addGap(18, 18, 18)
-                .addComponent(espacio, javax.swing.GroupLayout.DEFAULT_SIZE, 723, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 678, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(57, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -145,6 +152,7 @@ public class IDEPromt extends javax.swing.JFrame {
     private javax.swing.JTabbedPane espacio;
     private javax.swing.JButton jButton1;
     private javax.swing.JDesktopPane jDesktopPane1;
+    private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
     
     public void mostrarMensaje(String mensaje) {
@@ -158,10 +166,54 @@ public class IDEPromt extends javax.swing.JFrame {
     public void agregarResultados(ResultadoAnalisis resultados) {
         promtGenerado.setTexto(resultados.getPromt());
         espacio.add(promtGenerado);
-        erroresSintacticos.setTexto(resultados.getErroresSintacticos());
+        
+        DefaultTableModel modelo1 = new DefaultTableModel(resultados.getErroresSintacticos(), resultados.getColumnasErrSint());
+        JTable tabla1 = new JTable(modelo1);
+        tabla1.setFont(new Font("Liberation Sans", 0, 20));
+
+        DefaultTableCellRenderer renderizador = new DefaultTableCellRenderer();
+        renderizador.setBorder(
+                BorderFactory.createEmptyBorder(5, 10, 5, 10)
+        );
+        tabla1.setDefaultRenderer(Object.class, renderizador);
+        tabla1.getTableHeader().setFont(
+            new Font("Liberation Sans", Font.BOLD, 20)
+        );
+        
+        erroresSintacticos.agregarTabla(tabla1);
         espacio.add(erroresSintacticos);
-        arbol.setTexto(resultados.getArbol());
-        espacio.add(arbol);
+        
+        DefaultTableModel modelo2 = new DefaultTableModel(resultados.getErroresLexicos(), resultados.getColumnasErrLexicos());
+        JTable tabla2 = new JTable(modelo2);
+        tabla2.setFont(new Font("Liberation Sans", 0, 20));
+        
+        DefaultTableCellRenderer renderizador2 = new DefaultTableCellRenderer();
+        renderizador2.setBorder(
+                BorderFactory.createEmptyBorder(5, 10, 5, 10)
+        );
+        tabla2.setDefaultRenderer(Object.class, renderizador2);
+        tabla2.getTableHeader().setFont(
+            new Font("Liberation Sans", Font.BOLD, 20)
+        );
+        
+        erroresSintacticos.agregarTabla2(tabla2);
+        
+        
+        DefaultTableModel modelo3 = new DefaultTableModel(resultados.getSimbolos(), resultados.getColumnasSimbolos());
+        JTable tabla3 = new JTable(modelo3);
+        tabla3.setFont(new Font("Liberation Sans", 0, 20));
+        
+        DefaultTableCellRenderer renderizador3 = new DefaultTableCellRenderer();
+        renderizador3.setBorder(
+                BorderFactory.createEmptyBorder(5, 10, 5, 10)
+        );
+        tabla3.setDefaultRenderer(Object.class, renderizador3);
+        tabla3.getTableHeader().setFont(
+            new Font("Liberation Sans", Font.BOLD, 20)
+        );
+        
+        tablaSimbolos.agregarTabla(tabla3);
+        espacio.add(tablaSimbolos);
     }
     
 }
